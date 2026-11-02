@@ -1,0 +1,21 @@
+order_id,customer_email,product,amount_inr,order_date,status
+KC1042,riya@example.com,Monsoon Malabar 250g,650,2026-10-28,delivered
+KC1051,arjun@example.com,Cold Brew Kit,1450,2026-10-27,shipped
+KC1063,rahul@example.com,Espresso Machine Starter Pack,8999,2026-10-20,delivered
+KC1055,neha@example.com,Filter Coffee Blend 500g,890,2026-10-26,shipped
+KC1064,dev@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1065,sana@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1066,kabir@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1067,isha@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1068,aman@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1069,tara@example.com,Demo Coffee 250g,5100,2026-10-15,delivered
+KC1070,rohan@example.com,Demo Coffee 250g,650,2026-11-01,shipped
+KC1071,anaya@example.com,Demo Coffee 250g,650,2026-11-01,shipped
+KC1072,vivek@example.com,Demo Coffee 250g,650,2026-11-01,shipped
+KC1073,pihu@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1074,om@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1075,zoya@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1076,adi@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1077,kavya@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1078,nikhil@example.com,Demo Coffee 250g,650,2026-11-01,delivered
+KC1080,demo@example.com,Demo Coffee 250g,650,2026-11-01,shipped
