@@ -46,7 +46,7 @@ Use the fictional workshop emails only. Google's free-tier pricing page states t
 
 ## Other providers
 
-The same exercise can be implemented with Claude or OpenAI, but a Gemini key cannot authenticate their nodes. Use the matching provider node and credential; keep the same output contract:
+The presenter also demonstrates Claude. A Gemini key cannot authenticate an Anthropic model node. Use the matching provider node and credential; keep the same output contract:
 
 ```json
 {"category":"refund","draft_reply":"Two or three friendly sentences, signed Team Kaapi."}
@@ -56,9 +56,9 @@ The provider variants must each pass the workshop tests before being described a
 
 ## Before Days 2 and 3
 
-- Day 2: Python 3.11, an editor, the pinned workshop dependencies, local vector database, and downloaded Laya model. Exact Windows and Mac commands will be added with the tested implementation.
-- Day 3: Ollama, the chosen downloaded generation and embedding models, and the evaluation runner. The local models must be tested on the machine that will run them.
-- Presenter: Claude Code or Cursor access for the live coding. Required attendee coding-tool access will be confirmed in the Day 2 guide.
+- Day 2: keep your cloud API access available. Python 3.11 and an editor are planned for the knowledge and tool exercises; tested packages and Windows/Mac commands will be supplied with that implementation.
+- Day 3: keep the same cloud API access and workshop files. The session covers evaluations, guardrails, human approval, cost and latency.
+- No model downloads are part of the workshop prerequisites. Models are accessed through provider APIs.
 
 ## If you get stuck before class
 
