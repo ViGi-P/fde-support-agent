@@ -1,41 +1,36 @@
-# Kaapi & Co. support agent: FDE webinar
+# Kaapi & Co. support agent - FDE workshop
 
-One fictional coffee-brand support project. Revised schedule: Day 1 starts 3 November 2026; three consecutive sessions are planned through 5 November. Presenter handover is 2 November by 6 PM IST. Each session is approximately 150 minutes.
+Build one fictional coffee-brand support agent across three sessions, 3-5 November 2026, 8 PM IST. Each session is about 150 minutes. Model calls use cloud APIs throughout.
 
 ## Start here
 
 1. Complete [attendee preparation](docs/ATTENDEE-SETUP.md).
-2. Follow [Day 1 build checkpoints](day1/BUILD-GUIDE.md).
-3. Use [sample emails](day1/TEST-EMAILS.md) to check your result.
+2. Open the revised [Day 1 presentation PDF](Day1-Presentation.pdf).
+3. Follow the [Day 1 build guide](day1/BUILD-GUIDE.md).
+4. Download the [Gemini workflow](day1/kaapi-day1-gemini.json), import it once and select your own credentials.
+5. Use the [three sample emails](day1/TEST-EMAILS.md) to check the result.
 
-Day 1 integration tests VERIFIED on 2 November: both Gemini and Claude processed the refund, product and Hinglish delivery cases. Download the credential-free exports from day1 and reconnect your own accounts. The Gemini export was also imported into a clean unpublished draft. Phone-send timing and a timed first-time import remain rehearsal checks. Automatic Gmail polling is at least one minute on the tested Cloud instance, so an automatic 30-second result is not guaranteed. Days 2 and 3 implementations are forthcoming.
+The revised PDF is the current teaching version and replaces the earlier PowerPoint files. Slides 4-7 explain the three-day journey and prerequisites. The instructor demonstrates Claude; attendees follow Gemini. The optional provider comparison comes after the main build.
 
 ## Learning journey
 
 | Day | Build | Concepts |
 |---|---|---|
-| 1 | Email classification, reply drafts, a Sheet log and Slack alerts | Triggers, prompts, JSON, integrations, conditions |
-| 2 | A policy-aware agent with order tools | RAG, chunks, embeddings, retrieval, Laya, tool calling |
-| 3 | Operational checks and a local fallback | Evals, guardrails, human approval, cost, latency, offline inference |
+| 1 | Email classification, reply drafts, a Sheet log and refund alerts | Triggers, prompts, JSON, integrations and conditions |
+| 2 | Company knowledge and order tools | RAG, chunks, API embeddings, retrieval and tool calling |
+| 3 | Tests and cloud operating checks | Evals, guardrails, human approval, cost and latency |
+
+## What has been tested
+
+On 2 November both presenter variants processed the refund, product and Hinglish delivery cases. The Gemini export was also imported into a clean unpublished draft. Phone-send timing and a timed first-time import remain rehearsal checks. The tested Cloud instance polls Gmail at least once per minute, so automatic email-to-result time can exceed 30 seconds. A short successful run with no trigger output has not processed an email.
+
+Days 2 and 3 implementations are the next delivery milestones. The repository does not claim they are complete.
 
 ## Files
 
-- `kaapi-data/`: fictional tickets, orders, policies, FAQs and evaluation questions.
-- `day1/`: Day 1 instructions, tested Gemini/Claude workflow exports and an illustrated one-page quickstart.
-- `day2-rag/`, `day2-decision/`, `day2-agent/`: subsequent stages.
-- `day3-ops/`: evaluations, guardrails and offline operation.
-- `specs/`: tested live-build prompts, to be added.
-- `recordings/`: mandatory backup videos, to be added after rehearsal.
-- `docs/`: setup and troubleshooting.
+- `kaapi-data/`: fictional tickets, orders, policies, FAQs and evaluation cases.
+- `day1/`: workflow exports, prompt, test emails and build instructions.
+- `docs/`: account preparation and troubleshooting.
+- [WhatsApp setup message](WhatsApp-Attendee-Message.txt): a draft the organizer can share.
 
-Use your own n8n instance and API credentials. Do not put secrets into repository files, issues, screenshots or chat. All supplied customer records are fictional.
-
-Windows and Mac attendees follow the same browser-based Day 1 build. Local Python and model setup is for later days.
-
-## Teaching materials
-
-- [Attendee readiness slides](Attendee-Readiness.pptx)
-- [Day 1 teaching slides](Day-1-Live-Workshop.pptx)
-- [WhatsApp setup message](WhatsApp-Attendee-Message.txt)
-
-The presenter account, private runbook and saved credentials are not part of the participant kit.
+Use your own accounts and credentials. The public exports have no saved credentials, presenter Sheet IDs or execution data. The private presenter PDF and account login are not part of this repository.
