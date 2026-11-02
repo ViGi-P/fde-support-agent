@@ -1,56 +1,41 @@
-# Day 1: email to support draft
+# Day 1 - start here
 
-Status: WRITTEN GUIDE PREPARED; live workflow and screenshots NOT YET VERIFIED.
+Build a fictional Kaapi support workflow in your own n8n Cloud account. Windows and Mac use the same browser steps.
 
-Goal: receive a fictional customer email, classify it, create a draft, log it in Sheets and alert Slack for refunds. This Day 1 exercise does not send customer replies or execute refunds.
+## Get the files
+1. Download `kaapi-day1-gemini.json` from this folder (open file, then Download raw file).
+2. Open a new blank workflow in n8n. Use the workflow name menu **More actions > Import** and choose the JSON file. Do not import over a workflow you want to keep.
+3. The export deliberately has no credentials, presenter Sheet ID, Slack channel ID or execution data. Keep it unpublished until your setup and tests pass.
 
-## Checkpoint 0: accounts connected
+## Connect your accounts
+1. Double-click **1. New [KAAPI-DEMO] Email**. Select your Gmail credential. Filter: `subject:"[KAAPI-DEMO]"`, unread messages. Full payload is required (Simplify off). Polling: once per minute.
+2. Open **Google Gemini Model**. Connect your own Gemini API credential. The prepared model is `models/gemini-3.5-flash-lite`; verify access in your account. If unavailable, choose an accessible text model and repeat all tests. Temperature 0.2.
+3. Create a Google Sheet. In row 1 enter exactly: `time`, `sender`, `category`, `draft_reply`. In **5. Log to Kaapi Support Log**, select your Google credential, document and tab. Operation: Append Row. Keep the four mappings supplied by the template.
+4. In Slack create or choose a test channel such as #support. In **7. Alert #support (Refund Draft)** select your Slack credential and the channel you can post to. Re-select the channel from your own workspace if the imported name does not resolve.
+5. Keep the provided prompt, output parser and validation nodes. Do not rename nodes without updating expressions that refer to their names.
 
-Open n8n Cloud, your test Gmail inbox, `Kaapi Support Log`, and Slack. Connect Gmail, Sheets and the selected model provider through n8n credentials. Prepare Slack `#support` and its connection. Keep secrets out of exports.
+## Test in order
+Use the exact fictional inputs in TEST-EMAILS.md. Send them to the Gmail inbox selected on your trigger, with [KAAPI-DEMO] in the subject. Keep the messages unread for polling.
 
-## Checkpoint 1: capture an email
+| Test | Category | Sheet | Slack |
+|---|---|---|---|
+| T01 torn bag + refund request | refund | one new row | refund review alert |
+| T03 French press grind | product | one new row | no refund alert |
+| T05 Hinglish late order | delivery | one new row | no refund alert |
 
-Add Gmail Trigger, Message Received. Limit the trigger to the workshop subject prefix `[KAAPI-DEMO]` so unrelated inbox mail is not processed. Send T01 from `TEST-EMAILS.md` and inspect the received sender, subject and body.
+Use **Fetch Test Event** on the trigger to inspect a real email during a manual demonstration; **Execute workflow** runs the complete test. Published polling and manual tests have different timings. Avoid repeatedly running the same message unless you expect duplicate rows/alerts. This teaching workflow has no persistent deduplication.
 
-Expected: the trigger displays the test email. Check that the actual body is available, not merely an email ID or truncated snippet, before writing the model mapping.
+After the three tests pass, publish your workflow. Inspect **Executions** for success and check the actual Sheet and Slack outputs. Never show or share your API key.
 
-## Checkpoint 2: get structured AI output
+## What is already tested
+On 2 November 2026, both presenter variants processed T01/T03/T05 successfully. The shared log had six rows: two refund, two product and two delivery. Slack received two refund alerts, one per provider. Successful full workflow execution durations were about 4.6-5.9 seconds in these tests; those are not isolated model latencies.
 
-Add the provider's generation/chain node and paste `CLASSIFIER-PROMPT.md`. Map the received subject/body into the input. Require category and draft_reply in the output.
+The presenter's n8n Cloud rejected sub-minute polling. A one-minute interval works. Thus email-to-alert can exceed 30 seconds; the brief's automatic 30-second target is not a passed guarantee. A phone-send rehearsal and a timed first-time import by another person remain human checks.
 
-Expected: category is exactly `refund`, `delivery`, `product` or `other`; draft_reply is 2-3 friendly sentences, signed `Team Kaapi`. The implementation must parse and validate the JSON before downstream use.
+## Claude option
+Import `kaapi-day1-claude.json` into a separate workflow. Connect an Anthropic API credential instead of a Gemini credential, then repeat the Google/Slack setup. The tested presenter model is Claude Opus 5.5. API billing and access are separate from a Claude chat subscription. Compare both outputs on the same input and rubric; do not assume either always wins.
 
-## Checkpoint 3: append to Sheets
+## Teaching map
+Four business blocks: trigger, AI + JSON, log, condition + alert. The supplied implementation has 11 nodes including the model, parser, field-capture and validation helpers. It is not a strict four-node canvas. It drafts replies for review; it does not send customer replies or approve refunds.
 
-Append one row containing execution time, original sender, parsed category, and parsed draft_reply. Retain the original email fields if the model node replaces its input.
-
-Expected: one visible row with four populated columns. A manual node rerun can add duplicate rows; avoid repeatedly executing the append step when diagnosing an earlier node.
-
-## Checkpoint 4: alert Slack conditionally
-
-If parsed category is `refund`, post the sender and draft reply to `#support`. Product and delivery requests should still be logged but should not create refund alerts.
-
-The brief groups this as four teaching blocks, with IF + Slack in the fourth block. The real n8n canvas may need additional nodes/subnodes for the provider and condition. Keep the explanation simple and document the actual tested node count.
-
-## Acceptance test
-
-Send T01, T03 and T05 from a phone. For all three consecutive runs:
-
-- The Sheet receives a row.
-- T01 produces a Slack refund alert; T03 and T05 do not.
-- Category and reply are sensible, including the Hinglish input.
-- Measure email-to-row/alert time. The brief requires no more than 30 seconds.
-
-Gmail Trigger is polling-based. Verify its configured interval and actual timing before claiming the 30-second criterion is passed. A manual fetch demonstrates processing but is not proof of automatic trigger latency.
-
-## Export and homework
-
-After validation, export a credential-free workflow JSON and add it beside this guide. A first-time n8n user should be able to import, connect their services and pass a test in under 20 minutes. Add screenshots from the tested build and record a 60-90 second backup as `recordings/07-day1-n8n.mp4`.
-
-## Recovery checkpoints
-
-- Gmail fails: check the connected account, subject filter and whether the sample was already processed.
-- Model fails: check the matching provider credential, model availability, quota and JSON contract.
-- Sheet fails: check selected document/tab, permissions and exact header mappings.
-- Slack fails: check selected workspace/channel, authorized app access and refund condition.
-- Live setup stalls: demonstrate the saved working checkpoint or backup recording; resume attendee setup after the teaching block.
+For setup help see ../docs/ATTENDEE-SETUP.md. Day 2 and Day 3 executable implementations are separate forthcoming milestones, not completed Day 1 features.
