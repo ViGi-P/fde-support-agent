@@ -1,0 +1,22 @@
+☕ Your 3-day FDE workshop starts tomorrow!
+
+3-5 November 2026 | 8 PM IST | Around 2.5 hours per session
+
+We will build one project together: an AI support agent for a fictional coffee brand.
+Day 1: Email → AI classification + draft → Google Sheets → refund alert in Slack.
+Day 2: Add company knowledge (RAG), decision logic and order tools.
+Day 3: Test the agent, add guardrails and human approvals, measure cost/speed and explore offline operation.
+
+Please complete these before Day 1:
+✅ Laptop (Windows or Mac), charger, Chrome and stable internet.
+✅ Your own n8n Cloud account. Eligible new users can start the 14-day trial shortly before the workshop; confirm your trial is active for all three days.
+✅ Gmail + Google Sheets, and permission to connect them to n8n.
+✅ A Slack workspace/test channel where you can connect n8n and post alerts.
+✅ Your own Gemini API key from Google AI Studio, with one successful test request. Free-tier eligibility, model access and quotas vary by account/project.
+✅ Download the workshop kit: https://github.com/becomefde/fde-support-agent
+
+Gemini is our follow-along path. Chirag will also show the Claude API version so you can compare the same task. Claude API access/credits are optional; a chat subscription alone is not API access. Never share your key in chat or screenshots. Do not use the presenter's account or key.
+
+Day 1 runs in your browser; no Python installation is needed for it. The setup guide explains the additional preparation for Days 2 and 3. Use fictional examples only.
+
+Open the repository's setup guide and aim to arrive with all five account checks complete. Bring your questions and be ready to build! 🚀
