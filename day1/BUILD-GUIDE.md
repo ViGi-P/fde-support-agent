@@ -4,7 +4,7 @@ Build a fictional Kaapi support workflow in your own n8n Cloud account. Windows 
 
 ## Get the files
 1. Download `kaapi-day1-gemini.json` from this folder (open file, then Download raw file).
-2. Open a new blank workflow in n8n. Use the workflow name menu **More actions > Import** and choose the JSON file. Do not import over a workflow you want to keep.
+2. Open a new blank workflow in n8n. Use the workflow name menu **More actions > Import > From file** and choose the JSON file. If the optional AI-tool connector dialog appears, choose **Skip**; it is not required for this build. Do not import over a workflow you want to keep.
 3. The export deliberately has no credentials, presenter Sheet ID, Slack channel ID or execution data. Keep it unpublished until your setup and tests pass.
 
 ## Connect your accounts
