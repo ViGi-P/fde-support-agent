@@ -43,7 +43,7 @@ Create or choose `#support` and `#product-insights` in your own workspace. Make 
 1. Open https://aistudio.google.com/ using your own Google account.
 2. Complete any account, region, age or terms requirements yourself.
 3. Obtain a Gemini API key for your project and keep it private.
-4. Add it directly to a Google Gemini credential in n8n.
+4. Add it directly to a Google Gemini credential in n8n. In the current Gemini template, that model is connected to both classification and parser format repair. Keep both model wires; format repair may use an extra API request, counted against provider quota.
 5. Choose a model currently available to that project's free tier and run one short request before class.
 
 A Gemini website/chat subscription is different from API access. Free API access has model and project quotas; do not assume every model is free or available. A 429 error means you should check quota and retry later, rather than repeatedly executing the workflow.
