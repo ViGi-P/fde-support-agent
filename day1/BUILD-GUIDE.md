@@ -18,7 +18,7 @@ Product means questions, suggestions or complaints about coffee/equipment. It is
 ## Connect your accounts
 
 1. **1. New [KAAPI-DEMO] Email:** select your Gmail credential. Keep the unread filter, `subject:"[KAAPI-DEMO]"`, Simplify off and one-minute polling.
-2. **Google Gemini Model** or **Anthropic Claude Model:** select the matching provider credential. The prepared models are `models/gemini-3.5-flash-lite` and `claude-opus-5-5`; use an accessible model if the displayed model is unavailable, then retest. API access is separate from a chat subscription.
+2. **Google Gemini Model** or **Anthropic Claude Model:** select the matching provider credential. In the Gemini template, keep the same model connected to both the classifier and the structured parser for format repair; one credential serves both connections. The prepared models are `models/gemini-3.5-flash-lite` and `claude-opus-5-5`; use an accessible model if the displayed model is unavailable, then retest. API access is separate from a chat subscription.
 3. Download [Kaapi-Support-Log.csv](https://github.com/becomefde/fde-support-agent/releases/latest/download/Kaapi-Support-Log.csv). In a new blank Google spreadsheet use **File > Import > Upload** to import it, then rename the spreadsheet **Kaapi Support Log**. Google Sheets saves automatically. Row 1 must be exactly: `time`, `sender`, `category`, `draft_reply`. In **5. Log to Kaapi Support Log**, select your Google credential, document and tab. Keep **Append Row** and **Mapping Column Mode = Map Automatically**. The previous Edit Fields node supplies the four matching field names; do not leave empty manual Values to Send.
 4. Create or choose **two channels in your own Slack workspace**: `#support` and `#product-insights`. Ensure the connected n8n app/user can post to both; invite the app if your workspace requires it.
 5. Open **7a. Post #product-insights**: select your Slack credential and your product-insights channel. Open **7b. Post #support (All Other Categories)**: select the same Slack credential and your support channel. Imported names must resolve in your workspace; select another channel if you use different names.
@@ -27,6 +27,16 @@ Product means questions, suggestions or complaints about coffee/equipment. It is
 ## If Google Sheets says "At least one value has to be added under Values to Send"
 
 The manual column values are blank. Open **5. Log to Kaapi Support Log** and choose **Mapping Column Mode > Map Automatically**. Confirm the Sheet has the four exact headers above and the previous node outputs those same four fields. Publish the change. This error happens after classification; it does not mean the email should have another category. The corrected v1.1.1 JSONs already use automatic mapping.
+
+## If Gemini says "Model output doesn't fit required format"
+
+The strict parser rejected the response shape. For example, a separate `signature` field is invalid: Team Kaapi belongs inside `draft_reply`. n8n may request an outer `output` wrapper in its generated format instructions; keep that wrapper when requested. The ticket itself has exactly category and draft_reply.
+
+The v1.1.2 Gemini JSON includes explicit field instructions plus **Auto-Fix Format** on the structured parser. The existing **Google Gemini Model** is connected to its **Model** input as well as the classifier. Keep those wires in place. The repair prompt preserves the draft's meaning and rechecks the same schema; it does not add approval or permit invalid categories. A repair can make an extra model call, using provider quota.
+
+Do not switch On Error to Continue to bypass validation. If repair still fails, keep the run stopped, inspect the model's raw output, and compare it with the schema. Test the classifier and validation steps before running Sheet/Slack side effects.
+
+Verified with the burnt/bitter coffee feedback email: Gemini returned product and a non-empty draft signed Team Kaapi, and the validation node passed on its True branch. This was an AI/parser/validation test; it did not run the downstream Sheet or Slack nodes. The Claude template keeps its existing strict parser and the earlier Sheet fix.
 
 ## Understand the condition
 
