@@ -6,7 +6,7 @@ Use Claude for the presenter demonstration, then Gemini for the attendee build. 
 
 - Use the same email text, classifier instructions and supplied business context.
 - Require exactly the same JSON fields: category and draft_reply.
-- Use the same Sheet headers and refund-to-Slack condition.
+- Use the same Sheet headers and all-category Slack routing (product to #product-insights; refund/delivery/other to #support).
 - Record the exact provider/model ID and the settings used for each test.
 - Record actual output and measured runtime; use provider-reported token usage where available.
 - Use separate credentials. A Claude key does not work in a Gemini node.
@@ -16,7 +16,7 @@ Use Claude for the presenter demonstration, then Gemini for the attendee build. 
 
 1. Show T01 with Claude: refund category, a friendly draft, Sheet row, Slack alert.
 2. Show T01 with Gemini: the same business outcome through the attendee path.
-3. Show T03 and T05 to check product routing and Hinglish delivery handling.
+3. Show T03 in #product-insights and T05 in #support. Add T07 to check the other category.
 4. Discuss observed correctness, tone, JSON validity and elapsed time.
 5. Build the Gemini version together and provide the Claude export as an optional variant.
 

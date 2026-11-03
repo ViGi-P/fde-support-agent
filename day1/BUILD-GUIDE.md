@@ -2,40 +2,57 @@
 
 Build a fictional Kaapi support workflow in your own n8n Cloud account. Windows and Mac use the same browser steps.
 
+## Routing update - 3 November 2026
+
+**Every valid category now goes to Slack.** Product goes to `#product-insights`; refund, delivery and other go to `#support`. Each email follows only one Slack branch per execution. Earlier PDF screenshots of the refund-only condition show the previous routing. Use the JSON files and instructions on this page for the updated routing.
+
+Product means questions, suggestions or complaints about coffee/equipment. It is not automatically feedback; the product-insights channel collects all of these.
+
 ## Get the files
-1. Download `kaapi-day1-gemini.json` from this folder (open file, then Download raw file).
-2. Open a new blank workflow in n8n. Use the workflow name menu **More actions > Import > From file** and choose the JSON file. If the optional AI-tool connector dialog appears, choose **Skip**; it is not required for this build. Do not import over a workflow you want to keep.
-3. The export deliberately has no credentials, presenter Sheet ID, Slack channel ID or execution data. Keep it unpublished until your setup and tests pass.
+
+1. Download [Gemini JSON](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/kaapi-day1-gemini.json) or [Claude JSON](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/kaapi-day1-claude.json). Save as `.json`, not a webpage.
+2. Open a **new blank workflow** in n8n. Use **More actions > Import > From file** and choose the JSON. If the optional AI-tool connector dialog appears, choose **Skip**.
+3. If you imported an earlier version, this GitHub update does not update your n8n copy automatically. Import the new file into a separate workflow and select your own credentials again. Keep the old copy paused so both copies do not process the same email.
+4. Exports have no credentials, presenter Sheet ID or execution data. Keep the new copy unpublished until setup is complete. Use fictional data only.
 
 ## Connect your accounts
-1. Double-click **1. New [KAAPI-DEMO] Email**. Select your Gmail credential. Filter: `subject:"[KAAPI-DEMO]"`, unread messages. Full payload is required (Simplify off). Polling: once per minute.
-2. Open **Google Gemini Model**. Connect your own Gemini API credential. The prepared model is `models/gemini-3.5-flash-lite`; verify access in your account. If unavailable, choose an accessible text model and repeat all tests. Temperature 0.2.
-3. Create a Google Sheet. In row 1 enter exactly: `time`, `sender`, `category`, `draft_reply`. In **5. Log to Kaapi Support Log**, select your Google credential, document and tab. Operation: Append Row. Keep the four mappings supplied by the template.
-4. In Slack create or choose a test channel such as #support. In **7. Alert #support (Refund Draft)** select your Slack credential and the channel you can post to. Re-select the channel from your own workspace if the imported name does not resolve.
-5. Keep the provided prompt, output parser and validation nodes. Do not rename nodes without updating expressions that refer to their names.
 
-## Test in order
-Use the exact fictional inputs in TEST-EMAILS.md. Send them to the Gmail inbox selected on your trigger, with [KAAPI-DEMO] in the subject. Keep the messages unread for polling.
+1. **1. New [KAAPI-DEMO] Email:** select your Gmail credential. Keep the unread filter, `subject:"[KAAPI-DEMO]"`, Simplify off and one-minute polling.
+2. **Google Gemini Model** or **Anthropic Claude Model:** select the matching provider credential. The prepared models are `models/gemini-3.5-flash-lite` and `claude-opus-5-5`; use an accessible model if the displayed model is unavailable, then retest. API access is separate from a chat subscription.
+3. Create a Sheet with row 1 exactly: `time`, `sender`, `category`, `draft_reply`. In **5. Log to Kaapi Support Log**, select your Google credential, document and tab. Keep Append Row and the supplied four mappings.
+4. Create or choose **two channels in your own Slack workspace**: `#support` and `#product-insights`. Ensure the connected n8n app/user can post to both; invite the app if your workspace requires it.
+5. Open **7a. Post #product-insights**: select your Slack credential and your product-insights channel. Open **7b. Post #support (All Other Categories)**: select the same Slack credential and your support channel. Imported names must resolve in your workspace; select another channel if you use different names.
+6. Keep the prompt, parser and validation nodes. Do not rename nodes without updating expressions that reference their names.
 
-| Test | Category | Sheet | Slack |
+## Understand the condition
+
+After the Sheet append, **6. Is it Product?** compares the validated category with `product`.
+
+- **True** -> product Slack node.
+- **False** -> support Slack node, covering refund, delivery and other.
+- Invalid categories or empty drafts stop before logging or Slack. A failed Sheet append also prevents downstream Slack posting.
+
+Both Slack messages include category, sender, received time, subject, original message (up to the captured 4,000 characters) and the draft reply. Refund messages are marked **HUMAN REVIEW NEEDED**. No reply is sent to the customer, and no refund is approved.
+
+## Test all four categories
+
+Send the fictional inputs in [TEST-EMAILS.md](TEST-EMAILS.md) to **your connected inbox** from another account. Use fresh subjects beginning `[KAAPI-DEMO]`; leave them unread.
+
+| Test | Category | Sheet | Exactly one Slack destination |
 |---|---|---|---|
-| T01 torn bag + refund request | refund | one new row | refund review alert |
-| T03 French press grind | product | one new row | no refund alert |
-| T05 Hinglish late order | delivery | one new row | no refund alert |
+| T01 torn bag + refund request | refund | one new row | #support, HUMAN REVIEW NEEDED |
+| T03 French press grind | product | one new row | #product-insights |
+| T05 Hinglish late order | delivery | one new row | #support, delivery label |
+| T07 interview request | other | one new row | #support, other label |
 
-Use **Fetch Test Event** on the trigger to inspect a real email during a manual demonstration; **Execute workflow** runs the complete test. Published polling and manual tests have different timings. Avoid repeatedly running the same message unless you expect duplicate rows/alerts. This teaching workflow has no persistent deduplication.
+Publish only after configuring both Slack nodes, then allow the next one-minute poll. **Clicking Execute without an email can finish in milliseconds with "No trigger output"; this has not tested the AI, Sheet or Slack.** Inspect the newest execution, its processed item, the new Sheet row and the correct Slack channel. For manual testing, first fetch an email from the Gmail trigger using its displayed test control, then run the downstream workflow.
 
-After the three tests pass, publish your workflow. Inspect **Executions** for success and check the actual Sheet and Slack outputs. Never show or share your API key.
+Exactly one Slack branch means one post per valid email **within one successful execution**. This teaching workflow has no persistent deduplication: repeated manual runs, retries after partial failures, or two published provider copies can produce duplicates. Use one published provider copy per inbox.
 
-## What is already tested
-On 2 November 2026, both presenter variants processed T01/T03/T05 successfully. The shared log had six rows: two refund, two product and two delivery. Slack received two refund alerts, one per provider. Successful full workflow execution durations were about 4.6-5.9 seconds in these tests; those are not isolated model latencies.
+## Verification scope
 
-The presenter's n8n Cloud rejected sub-minute polling. A one-minute interval works. Thus email-to-alert can exceed 30 seconds; the brief's automatic 30-second target is not a passed guarantee. A phone-send rehearsal and a timed first-time import by another person remain human checks.
-
-## Claude option
-Import `kaapi-day1-claude.json` into a separate workflow. Connect an Anthropic API credential instead of a Gemini credential, then repeat the Google/Slack setup. The tested presenter model is Claude Opus 5.5. API billing and access are separate from a Claude chat subscription. Compare both outputs on the same input and rubric; do not assume either always wins.
+The original refund-only versions passed T01/T03/T05 against both providers on 2 November. That result does not certify the new routing. The revised exports are checked for all four routing outcomes, valid expressions, matching connections and absence of saved credentials. Verify your own Gmail, model, Sheet and both Slack connections with the four live test emails before class.
 
 ## Teaching map
-Four business blocks: trigger, AI + JSON, log, condition + alert. The supplied implementation has 11 nodes including the model, parser, field-capture and validation helpers. It is not a strict four-node canvas. It drafts replies for review; it does not send customer replies or approve refunds.
 
-For setup help see ../docs/ATTENDEE-SETUP.md. Day 2 and Day 3 executable implementations are separate forthcoming milestones, not completed Day 1 features.
+Four business blocks: email trigger; AI + JSON; Sheet log; category condition + Slack handoff. The implementation has 12 nodes including model, parser, field-capture and validation helpers. Day 2 and Day 3 implementations are separate forthcoming milestones.

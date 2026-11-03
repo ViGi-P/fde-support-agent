@@ -300,9 +300,9 @@
           },
           "conditions": [
             {
-              "id": "is-refund",
+              "id": "is-product",
               "leftValue": "={{ $('4. Keep Sender, Time & Result').item.json.category }}",
-              "rightValue": "refund",
+              "rightValue": "product",
               "operator": {
                 "type": "string",
                 "operation": "equals"
@@ -314,7 +314,7 @@
         "options": {}
       },
       "id": "871b239f-7395-4c1c-b35e-f507e928dda9",
-      "name": "6. Is it a Refund?",
+      "name": "6. Is it Product?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
@@ -329,22 +329,44 @@
         "channelId": {
           "__rl": true,
           "mode": "name",
+          "value": "product-insights"
+        },
+        "text": "=:coffee: *Product insight - question, suggestion or feedback*\n*Category:* {{ String($('4. Keep Sender, Time & Result').item.json.category ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*From:* {{ String($('4. Keep Sender, Time & Result').item.json.sender ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*Received:* {{ String($('4. Keep Sender, Time & Result').item.json.time ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*Subject:* {{ String($('2. Capture Sender, Time & Body').item.json.subject ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n*Original message:*\n{{ String($('2. Capture Sender, Time & Body').item.json.body ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n*Draft reply (NOT sent to customer):*\n{{ String($('4. Keep Sender, Time & Result').item.json.draft_reply ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "eaefe6b6-28da-4d6d-bb76-eda4c4c0a212",
+      "name": "7a. Post #product-insights",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1760,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
           "value": "support"
         },
-        "text": "=:money_with_wings: *Refund request - needs human review*\n*From:* {{ $('4. Keep Sender, Time & Result').item.json.sender }}\n*Received:* {{ $('4. Keep Sender, Time & Result').item.json.time }}\n\n*Draft reply (NOT sent):*\n{{ $('4. Keep Sender, Time & Result').item.json.draft_reply }}",
+        "text": "={{ $('4. Keep Sender, Time & Result').item.json.category === 'refund' ? ':money_with_wings: *Refund request - HUMAN REVIEW NEEDED*' : ':inbox_tray: *Support ticket - human review*' }}\n*Category:* {{ String($('4. Keep Sender, Time & Result').item.json.category ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*From:* {{ String($('4. Keep Sender, Time & Result').item.json.sender ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*Received:* {{ String($('4. Keep Sender, Time & Result').item.json.time ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*Subject:* {{ String($('2. Capture Sender, Time & Body').item.json.subject ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n*Original message:*\n{{ String($('2. Capture Sender, Time & Body').item.json.body ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n*Draft reply (NOT sent to customer):*\n{{ String($('4. Keep Sender, Time & Result').item.json.draft_reply ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
         "otherOptions": {
           "includeLinkToWorkflow": false
         }
       },
       "id": "ca02c2ed-0559-4a1e-b997-147197c859a9",
-      "name": "7. Alert #support (Refund Draft)",
+      "name": "7b. Post #support (All Other Categories)",
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.7,
       "position": [
-        1744,
-        112
-      ],
-      "webhookId": "8ccd796e-b145-4c8a-87d5-b5b5dee610b3"
+        1760,
+        256
+      ]
     },
     {
       "parameters": {
@@ -449,18 +471,25 @@
       "main": [
         [
           {
-            "node": "6. Is it a Refund?",
+            "node": "6. Is it Product?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "6. Is it a Refund?": {
+    "6. Is it Product?": {
       "main": [
         [
           {
-            "node": "7. Alert #support (Refund Draft)",
+            "node": "7a. Post #product-insights",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "7b. Post #support (All Other Categories)",
             "type": "main",
             "index": 0
           }
