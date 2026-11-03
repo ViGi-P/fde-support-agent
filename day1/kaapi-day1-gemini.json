@@ -232,13 +232,9 @@
           "value": ""
         },
         "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "time": "={{ $json.time }}",
-            "sender": "={{ $json.sender }}",
-            "category": "={{ $json.category }}",
-            "draft_reply": "={{ $json.draft_reply }}"
-          },
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
           "schema": [
             {
               "id": "time",
@@ -276,7 +272,9 @@
               "type": "string",
               "canBeUsedToMatch": true
             }
-          ]
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
         },
         "options": {}
       },
