@@ -9,7 +9,7 @@ Complete these checks before the live build. Use a laptop; Windows and Mac use t
 | Google | A Google account with Gmail and Sheets | You can open Gmail and create a Sheet |
 | n8n Cloud | Your own eligible 14-day trial or existing active instance | You can open the workflow editor |
 | Google AI Studio | Access to the Gemini API and a key for your own project | A small test request succeeds with a free-tier-supported model |
-| Slack | A workspace where you can authorize the n8n integration and use a support channel | You can connect Slack from your own n8n instance |
+| Slack | A workspace where you can authorize the n8n integration and use support and product-insights channels | You can connect Slack from your own n8n instance |
 | GitHub | A browser to download the public workshop files once published | You can obtain the files; a GitHub account is only needed to fork or contribute |
 
 The organizer's demonstration login and keys are for the presenter. Attendees use their own credentials. If your employer restricts app connections, prepare an account/workspace you are authorized to use before the event.
@@ -26,11 +26,15 @@ Current n8n documentation describes a 14-day trial with 1,000 executions. This i
 
 ## Prepare Google Sheets and connections
 
-Create a Sheet named `Kaapi Support Log` with these exact headers in row 1:
+Download the [Google Sheets starter CSV](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/Kaapi-Support-Log.csv). Open a new blank Google spreadsheet, use **File > Import > Upload**, and import the CSV into the blank spreadsheet. Rename it `Kaapi Support Log`; Google Sheets saves automatically to Drive. Confirm these exact headers in row 1:
 
 `time | sender | category | draft_reply`
 
 In n8n Cloud, use the managed **Sign in with Google** connection for Gmail and Sheets. Follow the displayed authorization prompts yourself. This supported path does not require creating a custom Google OAuth client in Cloud Console.
+
+## Prepare Slack channels
+
+Create or choose `#support` and `#product-insights` in your own workspace. Make sure the n8n integration can post to both. After importing the latest JSON, select your Slack credential and channel on **both** Slack posting nodes. Product goes to product-insights; refund, delivery and other go to support.
 
 ## Prepare the Gemini API
 
