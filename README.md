@@ -44,6 +44,8 @@ Click a link below to download the file attachment. Your browser may ask where t
 
 **Latest JSON update: 3 November — every valid category now appears in Slack.** Product goes to `#product-insights`; refund, delivery and other go to `#support`. Configure both Slack posting nodes. Older imported workflows do not update automatically.
 
+**Gemini format fix in v1.1.2:** the prompt keeps Team Kaapi inside `draft_reply`, and the strict parser has a model-connected format-repair fallback. A repair can use an extra Gemini API request. The parser and category/draft validation still stop invalid output. This version passed the coffee-feedback AI/parser and validation checks; no additional Sheet row or Slack post was made during that check.
+
 **Sheets fix in v1.1.1:** both JSONs use **Map Automatically**. If an older import reports "At least one value has to be added under Values to Send", open node 5 and switch Mapping Column Mode to Map Automatically, then publish the updated workflow. Keep the four exact headers shown below.
 
 ## 3. Turn the CSV into your Google Sheet
