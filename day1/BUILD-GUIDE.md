@@ -1,72 +1,92 @@
-# Day 1 - start here
+# Day 1 — import, connect, check, test
 
-Build a fictional Kaapi support workflow in your own n8n Cloud account. Windows and Mac use the same browser steps.
+**Use v2.0.0. Import into a NEW blank workflow.** Old imported copies do not update automatically. Keep the old copy unpublished when enabling its replacement. Choose Gemini OR Claude for your inbox.
 
-## Routing update - 3 November 2026
+The outcome: a new customer email becomes one category and one reply draft, one Google Sheet row and one Slack handoff. Product questions, suggestions and feedback go to the product channel. Refund, delivery and other go to support. A human reviews every draft; no customer email is sent.
 
-**Every valid category now goes to Slack.** Product goes to `#product-insights`; refund, delivery and other go to `#support`. Each email follows only one Slack branch per execution. Earlier PDF screenshots of the refund-only condition show the previous routing. Use the JSON files and instructions on this page for the updated routing.
+## Step 1 — create your Sheet
 
-Product means questions, suggestions or complaints about coffee/equipment. It is not automatically feedback; the product-insights channel collects all of these.
+Download [Kaapi-Support-Log.csv](https://github.com/becomefde/fde-support-agent/releases/latest/download/Kaapi-Support-Log.csv). In a NEW blank Google spreadsheet choose **File → Import → Upload**. Import the CSV into that blank spreadsheet. Confirm A1:D1 is exactly:
 
-## Get the files
-
-1. Download [Gemini JSON](https://github.com/becomefde/fde-support-agent/releases/latest/download/kaapi-day1-gemini.json) or [Claude JSON](https://github.com/becomefde/fde-support-agent/releases/latest/download/kaapi-day1-claude.json). Save as `.json`, not a webpage.
-2. Open a **new blank workflow** in n8n. Use **More actions > Import > From file** and choose the JSON. If the optional AI-tool connector dialog appears, choose **Skip**.
-3. If you imported an earlier version, this GitHub update does not update your n8n copy automatically. Import the new file into a separate workflow and select your own credentials again. Keep the old copy paused so both copies do not process the same email.
-4. Exports have no credentials, presenter Sheet ID or execution data. Keep the new copy unpublished until setup is complete. Use fictional data only.
-
-## Connect your accounts
-
-1. **1. New [KAAPI-DEMO] Email:** select your Gmail credential. Keep the unread filter, `subject:"[KAAPI-DEMO]"`, Simplify off and one-minute polling.
-2. **Google Gemini Model** or **Anthropic Claude Model:** select the matching provider credential. In the Gemini template, keep the same model connected to both the classifier and the structured parser for format repair; one credential serves both connections. The prepared models are `models/gemini-3.5-flash-lite` and `claude-opus-5-5`; use an accessible model if the displayed model is unavailable, then retest. API access is separate from a chat subscription.
-3. Download [Kaapi-Support-Log.csv](https://github.com/becomefde/fde-support-agent/releases/latest/download/Kaapi-Support-Log.csv). In a new blank Google spreadsheet use **File > Import > Upload** to import it, then rename the spreadsheet **Kaapi Support Log**. Google Sheets saves automatically. Row 1 must be exactly: `time`, `sender`, `category`, `draft_reply`. In **5. Log to Kaapi Support Log**, select your Google credential, document and tab. Keep **Append Row** and **Mapping Column Mode = Map Automatically**. The previous Edit Fields node supplies the four matching field names; do not leave empty manual Values to Send.
-4. Create or choose **two channels in your own Slack workspace**: `#support` and `#product-insights`. Ensure the connected n8n app/user can post to both; invite the app if your workspace requires it.
-5. Open **7a. Post #product-insights**: select your Slack credential and your product-insights channel. Open **7b. Post #support (All Other Categories)**: select the same Slack credential and your support channel. Imported names must resolve in your workspace; select another channel if you use different names.
-6. Keep the prompt, parser and validation nodes. Do not rename nodes without updating expressions that reference their names.
-
-## If Google Sheets says "At least one value has to be added under Values to Send"
-
-The manual column values are blank. Open **5. Log to Kaapi Support Log** and choose **Mapping Column Mode > Map Automatically**. Confirm the Sheet has the four exact headers above and the previous node outputs those same four fields. Publish the change. This error happens after classification; it does not mean the email should have another category. The corrected v1.1.1 JSONs already use automatic mapping.
-
-## If Gemini says "Model output doesn't fit required format"
-
-The strict parser rejected the response shape. For example, a separate `signature` field is invalid: Team Kaapi belongs inside `draft_reply`. n8n may request an outer `output` wrapper in its generated format instructions; keep that wrapper when requested. The ticket itself has exactly category and draft_reply.
-
-The v1.1.2 Gemini JSON includes explicit field instructions plus **Auto-Fix Format** on the structured parser. The existing **Google Gemini Model** is connected to its **Model** input as well as the classifier. Keep those wires in place. The repair prompt preserves the draft's meaning and rechecks the same schema; it does not add approval or permit invalid categories. A repair can make an extra model call, using provider quota.
-
-Do not switch On Error to Continue to bypass validation. If repair still fails, keep the run stopped, inspect the model's raw output, and compare it with the schema. Test the classifier and validation steps before running Sheet/Slack side effects.
-
-Verified with the burnt/bitter coffee feedback email: Gemini returned product and a non-empty draft signed Team Kaapi, and the validation node passed on its True branch. This was an AI/parser/validation test; it did not run the downstream Sheet or Slack nodes. The Claude template keeps its existing strict parser and the earlier Sheet fix.
-
-## Understand the condition
-
-After the Sheet append, **6. Is it Product?** compares the validated category with `product`.
-
-- **True** -> product Slack node.
-- **False** -> support Slack node, covering refund, delivery and other.
-- Invalid categories or empty drafts stop before logging or Slack. A failed Sheet append also prevents downstream Slack posting.
-
-Both Slack messages include category, sender, received time, subject, original message (up to the captured 4,000 characters) and the draft reply. Refund messages are marked **HUMAN REVIEW NEEDED**. No reply is sent to the customer, and no refund is approved.
-
-## Test all four categories
-
-Send the fictional inputs in [TEST-EMAILS.md](TEST-EMAILS.md) to **your connected inbox** from another account. Use fresh subjects beginning `[KAAPI-DEMO]`; leave them unread.
-
-| Test | Category | Sheet | Exactly one Slack destination |
+| A | B | C | D |
 |---|---|---|---|
-| T01 torn bag + refund request | refund | one new row | #support, HUMAN REVIEW NEEDED |
-| T03 French press grind | product | one new row | #product-insights |
-| T05 Hinglish late order | delivery | one new row | #support, delivery label |
-| T07 interview request | other | one new row | #support, other label |
+| time | sender | category | draft_reply |
 
-Publish only after configuring both Slack nodes, then allow the next one-minute poll. **Clicking Execute without an email can finish in milliseconds with "No trigger output"; this has not tested the AI, Sheet or Slack.** Inspect the newest execution, its processed item, the new Sheet row and the correct Slack channel. For manual testing, first fetch an email from the Gmail trigger using its displayed test control, then run the downstream workflow.
+Keep the Sheet URL and the exact tab name shown at the bottom. The spreadsheet title and bottom tab name are different things. Google saves automatically. You can type those four headers yourself instead of importing the CSV.
 
-Exactly one Slack branch means one post per valid email **within one successful execution**. This teaching workflow has no persistent deduplication: repeated manual runs, retries after partial failures, or two published provider copies can produce duplicates. Use one published provider copy per inbox.
+## Step 2 — prepare Slack
 
-## Verification scope
+In YOUR workspace create/open **#support** and **#product-insights**. Connect n8n to this same workspace. Add the connected n8n app to both channels: open the channel → channel details → Integrations → Add apps → n8n.cloud (the name shown by your connection). If your connection posts as a Slack user, that connected user must belong to both channels. Private channels also require an invitation. Workspace admins may need to approve app installation.
 
-The original refund-only versions passed T01/T03/T05 against both providers on 2 November. That result does not certify the new routing. The revised exports are checked for all four routing outcomes, valid expressions, matching connections and absence of saved credentials. Verify your own Gmail, model, Sheet and both Slack connections with the four live test emails before class.
+For each channel open channel details → About and copy the **Channel ID** (starts C, or G for some private channels). You may instead copy the full channel link. A name such as `#support` is not an ID. Names and IDs from the presenter's workspace will not work in your workspace.
 
-## Teaching map
+## Step 3 — import ONE workflow
 
-Four business blocks: email trigger; AI + JSON; Sheet log; category condition + Slack handoff. The implementation has 12 nodes including model, parser, field-capture and validation helpers. Day 2 and Day 3 implementations are separate forthcoming milestones.
+1. Download [Gemini JSON](https://github.com/becomefde/fde-support-agent/releases/latest/download/kaapi-day1-gemini.json) or [Claude JSON](https://github.com/becomefde/fde-support-agent/releases/latest/download/kaapi-day1-claude.json).
+2. n8n → New workflow → top **More actions → Import → From file**. Choose the downloaded JSON. Skip optional AI-tool setup if offered.
+3. Open each node below and select the named account. Create each account connection once, then reuse it. Existing credentials may be selected automatically: confirm they are YOUR intended accounts.
+
+| Node(s) | Credential to select |
+|---|---|
+| 1. New [KAAPI-DEMO] Email | Your Gmail account |
+| Google Gemini Model OR Anthropic Claude Model | Your corresponding API credential |
+| Check Sheet headers AND 5. Log to Kaapi Support Log | The SAME Google Sheets account with edit access |
+| Check product channel, Check support channel, 7a. Post #product-insights, 7b. Post #support | The SAME Slack account/workspace |
+
+There are **8 credential selectors, using 4 account connections**. API keys belong only in n8n Credentials. Keep Gmail Simplify OFF. Do not edit the prepared Sheet destination expressions, mapping or Slack channel expressions.
+
+## Step 4 — fill ONE Workshop Setup node
+
+Open **Workshop Setup** and fill its four values:
+
+| Field | Paste |
+|---|---|
+| sheet_url | Your Google spreadsheet URL |
+| sheet_tab | Exact bottom tab name, for example Sheet1 or Kaapi-Support-Log |
+| product_channel_id | Your product channel ID or full channel link |
+| support_channel_id | Your support channel ID or full channel link |
+
+Close the node. All downstream destinations come from these settings. **Do not choose a different document/tab inside node 5.** This avoids the picker action that previously cleared column mappings. The append node uses the supported legacy v3 automatic-data mode, without the newer Values to Send resource mapper. Keep its prepared version and settings for this workshop.
+
+## Step 5 — Check setup BEFORE sending an email
+
+Use the arrow beside **Execute workflow** → **From Check setup - click Execute workflow**. Choosing this menu entry starts the check.
+
+Open **READY - setup checks passed**. Its output should say **READY — Sheet headers and both Slack channels verified**. This check reads the Sheet and channel information. It does not call the AI model, append a row or send a Slack message. It verifies read access, headers, channel visibility, membership and archive status. The first email below verifies write/post access and the API model.
+
+If a check stops, fix the named setup field/account and run the check again. Do not ignore the error or change AI validation to continue on error.
+
+## Step 6 — test a real NEW email
+
+1. Open **1. New [KAAPI-DEMO] Email** → **Fetch Test Event / Test this trigger** (the label can vary). Send a NEW matching email from a second inbox while the trigger is listening. Leave it unread in the connected Gmail inbox.
+2. Confirm the trigger returns at least one item, with sender, subject and plain text. If the trigger finds no item, the rest cannot run.
+3. Close the node, choose **Execute workflow → From 1. New [KAAPI-DEMO] Email** to process the fetched email. If n8n waits for another email instead, send a fresh matching email while it listens.
+4. Inspect **4. Keep Sender, Time & Result**, the actual Google Sheet and the actual destination Slack channel. One valid input email should produce one row and one Slack message.
+5. Test the four cases in [TEST-EMAILS.md](TEST-EMAILS.md). Keep fixture/mock/pinned data out of your live workflow.
+6. Once your first end-to-end test passes, publish this ONE provider workflow. New unread matching emails are polled once per minute. Leave the other provider and old copies unpublished.
+
+| Test | Sheet | Slack |
+|---|---|---|
+| Torn bag, requests refund | One row, refund | Support, HUMAN REVIEW NEEDED |
+| Burnt coffee feedback / grind question | One row, product | Product channel |
+| Hinglish late-order query | One row, delivery | Support |
+| Student magazine interview | One row, other | Support |
+
+## If a check fails
+
+| What you see | Do this |
+|---|---|
+| SETUP: sheet_url / sheet_tab | Fill Workshop Setup; use the bottom tab name, not the file title |
+| Google access/header error | Select the intended Google credential on BOTH Sheet nodes. Give that Google account edit access. Check the exact four headers in row 1, starting A1 |
+| SETUP: Slack cannot access… / channel_not_found | Use a Channel ID from the SAME workspace as ALL FOUR Slack credentials. Add the connected app/user to the channel. Public existence alone is insufficient |
+| Invalid model / quota / billing | Choose an available model in your API project; check its quota/credits. A chat subscription is separate from API access |
+| AI output format error | Gemini has a strict parser and format-repair fallback. A repair may use an extra request. Persistent invalid output must stop before logging/posting; inspect the AI response |
+| Values to Send error | You are using an old copy or changed/upgraded the prepared append node. Import v2.0.0 into a NEW blank workflow and follow this guide |
+| Successful in milliseconds | Check whether you ran setup-only or the Gmail trigger returned no email. READY checks are not an email-processing run |
+| Duplicate rows/messages | Unpublish extra provider/old workflows. Repeated manual runs and retries can repeat side effects; this teaching workflow has no persistent deduplication |
+
+## Instructor flow
+
+Explain the business need → show the three-day outcome → connect four accounts → fill Workshop Setup → run setup checks → test one email → inspect category + draft → inspect Sheet → inspect the correct Slack channel → repeat refund/delivery/product → let attendees test → discuss failures and human review. Keep the implementation/check nodes collapsed while teaching the main business flow.
+
+v2 replaces the earlier destination setup instructions and screenshots in the PDF/deck. Use this online guide for configuration. Models run through cloud APIs on every day of the workshop.

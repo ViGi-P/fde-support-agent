@@ -1,6 +1,74 @@
 {
-  "name": "Kaapi Day 1 - Claude - Presenter",
+  "name": "Kaapi Day 1 - Claude - v2.0",
   "nodes": [
+    {
+      "parameters": {},
+      "id": "8ff53880-3d41-422d-94b8-c85b975b4888",
+      "name": "Check setup - click Execute workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "sheet_url",
+              "name": "sheet_url",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "sheet_tab",
+              "name": "sheet_tab",
+              "type": "string",
+              "value": "Sheet1"
+            },
+            {
+              "id": "product_channel_id",
+              "name": "product_channel_id",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "support_channel_id",
+              "name": "support_channel_id",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "f88627b2-9572-4a8e-9bf2-1a1f45737f71",
+      "name": "Workshop Setup",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 1. Connect accounts\nSelect existing credentials on Gmail, AI Model, 2 Google Sheets nodes, 2 Slack check nodes and 2 Slack post nodes. Reuse the SAME account per service.\n\n## 2. Workshop Setup\nPaste your Sheet URL, exact bottom tab name and TWO Slack channel IDs (channel details → About → Channel ID; channel links also work). Add the connected Slack app/user to both channels.\n\n## 3. Run Check setup\nUse the Execute dropdown → From Check setup. It checks Sheet headers + Slack channel access. It sends no message and uses no model tokens. READY means those checks passed; your first email verifies write/post permissions.\n\n## 4. Email test\nOpen Gmail trigger → Test this trigger. Send a NEW email with [KAAPI-DEMO] in the subject. Run the rest. Inspect Sheet and Slack. Publish only ONE provider workflow.\n\nNo customer email is sent. AI drafts always require human review.",
+        "height": 520,
+        "width": 620
+      },
+      "id": "ca0b9d5d-21ae-4399-8936-3c3f288a70ba",
+      "name": "START HERE - v2.0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -800
+      ]
+    },
     {
       "parameters": {
         "pollTimes": {
@@ -24,60 +92,20 @@
       "typeVersion": 1.4,
       "position": [
         0,
-        112
+        0
       ]
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "sender",
-              "name": "sender",
-              "type": "string",
-              "value": "={{ $json.from.value[0].address }}"
-            },
-            {
-              "id": "sender_display",
-              "name": "sender_display",
-              "type": "string",
-              "value": "={{ $json.from.text }}"
-            },
-            {
-              "id": "received_at",
-              "name": "received_at",
-              "type": "string",
-              "value": "={{ $json.date }}"
-            },
-            {
-              "id": "subject",
-              "name": "subject",
-              "type": "string",
-              "value": "={{ $json.subject }}"
-            },
-            {
-              "id": "body",
-              "name": "body",
-              "type": "string",
-              "value": "={{ ($json.text || '').slice(0, 4000) }}"
-            },
-            {
-              "id": "message_id",
-              "name": "message_id",
-              "type": "string",
-              "value": "={{ $json.id }}"
-            }
-          ]
-        },
-        "options": {}
+        "jsCode": "return $input.all().map((item, i) => {\n  const j = item.json;\n  const fail = m => { throw new Error('SETUP: ' + m); };\n  const raw = String(j.sheet_url || '').trim();\n  const sheetId = raw.match(/\\/spreadsheets\\/d\\/([\\w-]+)/)?.[1] || (/^[\\w-]{20,}$/.test(raw) ? raw : '');\n  if (!sheetId) fail('Open Workshop Setup and paste your Google Sheet URL into sheet_url.');\n  const tab = String(j.sheet_tab || '').trim();\n  if (!tab) fail('Enter the exact bottom tab name in sheet_tab, for example Sheet1.');\n  function channel(value, field) {\n    const s = String(value || '').trim();\n    const id = s.match(/(?:\\/archives\\/|\\/client\\/[^/]+\\/)([CG][A-Z0-9]+)/)?.[1] || s;\n    if (!/^[CG][A-Z0-9]{8,}$/.test(id)) fail('Paste the Channel ID or channel link into ' + field + '. A #channel-name is not an ID.');\n    return id;\n  }\n  const product = channel(j.product_channel_id, 'product_channel_id');\n  const support = channel(j.support_channel_id, 'support_channel_id');\n  if (product === support) fail('Use two different channels for product feedback and support.');\n  const isSetupCheck = !j.id;\n  const sender = j.from?.value?.[0]?.address || '';\n  const body = String(j.text || '').slice(0, 4000);\n  if (!isSetupCheck && (!sender || !body.trim())) fail('Gmail must have Simplify OFF and the test email must include plain text.');\n  const quotedTab = \"'\" + tab.replace(/'/g, \"''\") + \"'\";\n  return {json:{sender,sender_display:j.from?.text || sender,received_at:j.date || '',subject:j.subject || '',body,message_id:j.id || '',isSetupCheck,\n    sheetId,sheet_tab:tab,headerRange:encodeURIComponent(quotedTab+'!A1:D1'),appendRange:encodeURIComponent(quotedTab+'!A:D'),product_channel_id:product,support_channel_id:support},pairedItem:{item:i}};\n});"
       },
       "id": "dc12eac1-bceb-454d-85fd-11c8c92fb56d",
       "name": "2. Capture Sender, Time & Body",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.5,
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        224,
-        112
+        480,
+        0
       ]
     },
     {
@@ -99,8 +127,8 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        448,
-        112
+        2160,
+        80
       ]
     },
     {
@@ -117,8 +145,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.6,
       "position": [
-        464,
-        336
+        2080,
+        360
       ]
     },
     {
@@ -131,8 +159,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        592,
-        336
+        2360,
+        360
       ]
     },
     {
@@ -175,8 +203,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        800,
-        112
+        2400,
+        80
       ]
     },
     {
@@ -216,8 +244,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1072,
-        128
+        2560,
+        -160
       ]
     },
     {
@@ -225,68 +253,28 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "mode": "list",
-          "value": ""
+          "mode": "id",
+          "value": "={{ $('2. Capture Sender, Time & Body').first().json.sheetId }}"
         },
         "sheetName": {
           "__rl": true,
-          "mode": "list",
-          "value": ""
+          "mode": "name",
+          "value": "={{ $('2. Capture Sender, Time & Body').first().json.sheet_tab }}"
         },
-        "columns": {
-          "mappingMode": "autoMapInputData",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "time",
-              "displayName": "time",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "sender",
-              "displayName": "sender",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "category",
-              "displayName": "category",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "draft_reply",
-              "displayName": "draft_reply",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
+        "dataMode": "autoMapInputData",
+        "options": {
+          "cellFormat": "RAW",
+          "handlingExtraData": "error",
+          "useAppend": true
+        }
       },
-      "id": "3bd1dea2-929d-465c-bbf2-d028d2bbcf58",
+      "id": "d79d971e-25a3-4f2b-b560-758121c96972",
       "name": "5. Log to Kaapi Support Log",
       "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
+      "typeVersion": 3,
       "position": [
-        1296,
-        128
+        2560,
+        0
       ]
     },
     {
@@ -318,8 +306,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1520,
-        112
+        3040,
+        0
       ]
     },
     {
@@ -328,8 +316,8 @@
         "select": "channel",
         "channelId": {
           "__rl": true,
-          "mode": "name",
-          "value": "product-insights"
+          "mode": "id",
+          "value": "={{ $('2. Capture Sender, Time & Body').item.json.product_channel_id }}"
         },
         "text": "=:coffee: *Product insight - question, suggestion or feedback*\n*Category:* {{ String($('4. Keep Sender, Time & Result').item.json.category ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*From:* {{ String($('4. Keep Sender, Time & Result').item.json.sender ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*Received:* {{ String($('4. Keep Sender, Time & Result').item.json.time ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*Subject:* {{ String($('2. Capture Sender, Time & Body').item.json.subject ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n*Original message:*\n{{ String($('2. Capture Sender, Time & Body').item.json.body ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n*Draft reply (NOT sent to customer):*\n{{ String($('4. Keep Sender, Time & Result').item.json.draft_reply ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
         "otherOptions": {
@@ -341,8 +329,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.7,
       "position": [
-        1760,
-        -32
+        3280,
+        -100
       ]
     },
     {
@@ -351,8 +339,8 @@
         "select": "channel",
         "channelId": {
           "__rl": true,
-          "mode": "name",
-          "value": "support"
+          "mode": "id",
+          "value": "={{ $('2. Capture Sender, Time & Body').item.json.support_channel_id }}"
         },
         "text": "={{ $('4. Keep Sender, Time & Result').item.json.category === 'refund' ? ':money_with_wings: *Refund request - HUMAN REVIEW NEEDED*' : ':inbox_tray: *Support ticket - human review*' }}\n*Category:* {{ String($('4. Keep Sender, Time & Result').item.json.category ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*From:* {{ String($('4. Keep Sender, Time & Result').item.json.sender ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*Received:* {{ String($('4. Keep Sender, Time & Result').item.json.time ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n*Subject:* {{ String($('2. Capture Sender, Time & Body').item.json.subject ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n*Original message:*\n{{ String($('2. Capture Sender, Time & Body').item.json.body ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}\n\n*Draft reply (NOT sent to customer):*\n{{ String($('4. Keep Sender, Time & Result').item.json.draft_reply ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
         "otherOptions": {
@@ -364,8 +352,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.7,
       "position": [
-        1760,
-        256
+        3280,
+        120
       ]
     },
     {
@@ -377,8 +365,179 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        1184,
-        208
+        2600,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('2. Capture Sender, Time & Body').first().json.sheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('2. Capture Sender, Time & Body').first().json.sheet_tab }}"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "time",
+              "lookupValue": "time"
+            }
+          ]
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRange",
+              "headerRow": 1,
+              "firstDataRow": 1
+            }
+          },
+          "returnFirstMatch": true
+        }
+      },
+      "id": "75b29333-d2dd-4166-b749-7462b47a3f34",
+      "name": "Check Sheet headers",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        720,
+        0
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map((item,i) => {\n  const j = item.json;\n  if (j.error) throw new Error('SETUP: Google Sheets could not be read. Select your Google Sheets credential, check edit access and the sheet_url / sheet_tab. ' + String(j.error.message || ''));\n  const expected = ['time','sender','category','draft_reply'];\n  const actual = expected.map(k => j[k]);\n  if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error('SETUP: Row 1, cells A1:D1 must be exactly time, sender, category, draft_reply, in that order. Import the supplied CSV into the tab named in Workshop Setup.');\n  return {json:$('2. Capture Sender, Time & Body').all()[i].json,pairedItem:{item:i}};\n});"
+      },
+      "id": "184d8354-fddb-4fb6-a426-40ab8ba75688",
+      "name": "Verify four Sheet headers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "channel",
+        "operation": "get",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('2. Capture Sender, Time & Body').item.json.product_channel_id }}"
+        },
+        "options": {}
+      },
+      "id": "68ebaaa1-343c-4886-8b47-1e21c3de3aa6",
+      "name": "Check product channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1200,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "channel",
+        "operation": "get",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('2. Capture Sender, Time & Body').item.json.support_channel_id }}"
+        },
+        "options": {}
+      },
+      "id": "b37d7c39-5faa-47c0-b869-f6ba312f3709",
+      "name": "Check support channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map((item,i) => {\n  const product = $('Check product channel').all()[i].json;\n  const support = item.json;\n  for (const [role, result] of [['product',product],['support',support]]) {\n    if (!result.id || result.error) throw new Error('SETUP: Slack cannot access the ' + role + ' channel (' + String(result.error || 'invalid response') + '). Use the channel ID from the SAME workspace as your Slack credential. Add the connected Slack app/user to that channel; reconnect the correct workspace if needed.');\n    if (result.is_archived) throw new Error('SETUP: The ' + role + ' channel is archived. Choose an active channel.');\n    if (result.is_member === false) throw new Error('SETUP: Add the connected Slack app/user to the ' + role + ' channel, then run Check setup again.');\n  }\n  return {json:{...$('2. Capture Sender, Time & Body').all()[i].json,setup_status:'READY - Sheet headers and both Slack channels verified. For an end-to-end test, send a NEW [KAAPI-DEMO] email while the Gmail trigger is listening.'},pairedItem:{item:i}};\n});"
+      },
+      "id": "58736470-8706-45de-a5d1-1dbd4b766f36",
+      "name": "Verify Slack access",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "setup-only",
+              "leftValue": "={{ $json.isSetupCheck }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c80d7fd8-f250-4a56-b158-f5503391c8d4",
+      "name": "Setup check only?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "3fa8cd7a-ee73-4f5f-a228-f695a5bbe08b",
+      "name": "READY - setup checks passed",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map((item,i) => {\n  const j = item.json;\n  const source = $('4. Keep Sender, Time & Result').all()[i].json;\n  if (j.error || ['time','sender','category','draft_reply'].some(k => j[k] !== source[k])) throw new Error('SHEET WRITE FAILED: Expected one row with four matching fields. Check Sheet edit access. No Slack message was posted.');\n  return {json:source,pairedItem:{item:i}};\n});"
+      },
+      "id": "0e0ca931-b3be-4eb0-8afb-4746e9f4a9f5",
+      "name": "Confirm Sheet row saved",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2800,
+        0
       ]
     }
   ],
@@ -387,7 +546,7 @@
       "main": [
         [
           {
-            "node": "2. Capture Sender, Time & Body",
+            "node": "Workshop Setup",
             "type": "main",
             "index": 0
           }
@@ -398,7 +557,7 @@
       "main": [
         [
           {
-            "node": "3. Claude: Classify & Draft Reply",
+            "node": "Check Sheet headers",
             "type": "main",
             "index": 0
           }
@@ -471,7 +630,7 @@
       "main": [
         [
           {
-            "node": "6. Is it Product?",
+            "node": "Confirm Sheet row saved",
             "type": "main",
             "index": 0
           }
@@ -490,6 +649,112 @@
         [
           {
             "node": "7b. Post #support (All Other Categories)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workshop Setup": {
+      "main": [
+        [
+          {
+            "node": "2. Capture Sender, Time & Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Sheet headers": {
+      "main": [
+        [
+          {
+            "node": "Verify four Sheet headers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify four Sheet headers": {
+      "main": [
+        [
+          {
+            "node": "Check product channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check product channel": {
+      "main": [
+        [
+          {
+            "node": "Check support channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check support channel": {
+      "main": [
+        [
+          {
+            "node": "Verify Slack access",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Slack access": {
+      "main": [
+        [
+          {
+            "node": "Setup check only?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check setup - click Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "Workshop Setup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setup check only?": {
+      "main": [
+        [
+          {
+            "node": "READY - setup checks passed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "3. Claude: Classify & Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirm Sheet row saved": {
+      "main": [
+        [
+          {
+            "node": "6. Is it Product?",
             "type": "main",
             "index": 0
           }
