@@ -26,7 +26,7 @@ Current n8n documentation describes a 14-day trial with 1,000 executions. This i
 
 ## Prepare Google Sheets and connections
 
-Download the [Google Sheets starter CSV](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/Kaapi-Support-Log.csv). Open a new blank Google spreadsheet, use **File > Import > Upload**, and import the CSV into the blank spreadsheet. Rename it `Kaapi Support Log`; Google Sheets saves automatically to Drive. Confirm these exact headers in row 1:
+Download the [Google Sheets starter CSV](https://github.com/becomefde/fde-support-agent/releases/download/v1.1.0/Kaapi-Support-Log.csv). Open a new blank Google spreadsheet, use **File > Import > Upload**, and import the CSV into the blank spreadsheet. Rename it `Kaapi Support Log`; Google Sheets saves automatically to Drive. Confirm these exact headers in row 1:
 
 `time | sender | category | draft_reply`
 
