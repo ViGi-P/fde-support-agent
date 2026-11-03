@@ -1,4 +1,4 @@
-> **Day 1 configuration update — v2.0.0:** Use [the current six-step guide](../day1/BUILD-GUIDE.md) for import and connection. It is the complete Day 1 import and connection sequence. Fill the four values in Workshop Setup, reuse credentials across the listed nodes, and run Check setup before testing an email.
+> **Current Day 1 setup: v3.0.0.** Use [the connect-and-select guide](../day1/BUILD-GUIDE.md). No Workshop Setup or copied IDs/URLs.
 
 # Before the FDE webinar
 
@@ -26,21 +26,28 @@ The organizer's demonstration login and keys are for the presenter. Attendees us
 
 Current n8n documentation describes a 14-day trial with 1,000 executions. This is a time-limited trial, not a permanent free Cloud plan; eligibility and current signup conditions apply. Start shortly before the workshop so the three sessions fall inside your trial. Export your workflow before the trial ends.
 
-## Prepare Google Sheets and connections
+## Create your Sheet
 
-Download the [Google Sheets starter CSV](https://github.com/becomefde/fde-support-agent/releases/latest/download/Kaapi-Support-Log.csv). Open a new blank Google spreadsheet, use **File > Import > Upload**, and import the CSV into the blank spreadsheet. Rename it `Kaapi Support Log`; Google Sheets saves automatically to Drive. Confirm these exact headers in row 1:
+Download the [starter CSV](https://github.com/becomefde/fde-support-agent/releases/latest/download/Kaapi-Support-Log.csv). Open a NEW blank spreadsheet in the Google account you will connect to n8n. Choose **File → Import → Upload** and import it into that blank spreadsheet. Google saves automatically. Confirm four separate cells in row 1:
 
-`time | sender | category | draft_reply`
+| A | B | C | D |
+|---|---|---|---|
+| time | sender | category | draft_reply |
 
-Paste the Sheet URL and exact bottom tab name into **Workshop Setup**. Select the same Google Sheets credential on **Check Sheet headers** and **5. Log to Kaapi Support Log**. Keep the prepared destination expressions and append settings unchanged; change destinations only in Workshop Setup.
+Select this spreadsheet and its tab from node 5's lists. No URL or tab name needs to be typed. Use your own Sheet with edit access.
 
-In n8n Cloud, use the managed **Sign in with Google** connection for Gmail and Sheets. Follow the displayed authorization prompts yourself. This supported path does not require creating a custom Google OAuth client in Cloud Console.
+## Connect and select — v3.0.0
 
-## Prepare Slack channels
+**Import ONE JSON into a NEW blank workflow.** No Workshop Setup node, copied Sheet URLs, channel IDs, typed tab names or separate setup-check run.
 
-Create/open `#support` and `#product-insights` in your own workspace. Add the connected n8n app/user to both. Copy their **Channel IDs** from channel details → About, or use their full channel links. Paste them into Workshop Setup. Reuse the SAME Slack credential/workspace across both channel-check nodes and both posting nodes.
+1. **Gmail trigger:** select your Gmail credential. Keep Simplify OFF.
+2. **Google Gemini Model / Anthropic Claude Model:** select the matching API credential.
+3. **5. Log to Kaapi Support Log:** select your Google Sheets credential. Choose **Document → From list → your spreadsheet**, then **Sheet → From list → its tab**. Keep the prepared automatic Data Mode and node version.
+4. In your own Slack workspace, create/open **#support** and **#product-insights**. Allow the connected n8n app/user to post in both. If needed, open channel details → **Integrations → Add apps → n8n.cloud** (or the name of your connected app). Workspace admins may need to approve it.
+5. **7a. Post #product-insights:** select your Slack credential, then **Channel → From list → product-insights**.
+6. **7b. Post #support (All Other Categories):** select the SAME Slack credential, then **Channel → From list → support**.
 
-Run **Execute dropdown → From Check setup** and inspect READY before your email test. This verifies headers and channel access without AI calls or posts; your first email verifies write/post permissions.
+**5 credential selectors use 4 account connections.** The dropdowns store IDs automatically. Connecting an account does not automatically create the Sheet/channels or grant permission to them.
 
 ## Prepare the Gemini API
 
