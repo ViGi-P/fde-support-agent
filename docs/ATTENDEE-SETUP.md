@@ -42,7 +42,7 @@ Select this spreadsheet and its tab from node 5's lists. No URL or tab name need
 
 1. **Gmail trigger:** select your Gmail credential. Keep Simplify OFF.
 2. **Google Gemini Model / Anthropic Claude Model:** select the matching API credential.
-3. **5. Log to Kaapi Support Log:** select your Google Sheets credential. Choose **Document → From list → your spreadsheet**, then **Sheet → From list → its tab**. Keep the prepared automatic Data Mode and node version.
+3. **5. Log to Kaapi Support Log:** select your Google Sheets credential. Choose **Document → From list → your spreadsheet**, then **Sheet → From list → its tab**. **After choosing the tab, set Data Mode → Auto-Map Input Data to Columns LAST.** n8n can reset this option when a destination changes; keep the prepared node version.
 4. In your own Slack workspace, create/open **#support** and **#product-insights**. Allow the connected n8n app/user to post in both. If needed, open channel details → **Integrations → Add apps → n8n.cloud** (or the name of your connected app). Workspace admins may need to approve it.
 5. **7a. Post #product-insights:** select your Slack credential, then **Channel → From list → product-insights**.
 6. **7b. Post #support (All Other Categories):** select the SAME Slack credential, then **Channel → From list → support**.
