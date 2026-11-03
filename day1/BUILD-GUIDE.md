@@ -10,7 +10,7 @@ Product means questions, suggestions or complaints about coffee/equipment. It is
 
 ## Get the files
 
-1. Download [Gemini JSON](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/kaapi-day1-gemini.json) or [Claude JSON](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/kaapi-day1-claude.json). Save as `.json`, not a webpage.
+1. Download [Gemini JSON](https://github.com/becomefde/fde-support-agent/releases/download/v1.1.0/kaapi-day1-gemini.json) or [Claude JSON](https://github.com/becomefde/fde-support-agent/releases/download/v1.1.0/kaapi-day1-claude.json). Save as `.json`, not a webpage.
 2. Open a **new blank workflow** in n8n. Use **More actions > Import > From file** and choose the JSON. If the optional AI-tool connector dialog appears, choose **Skip**.
 3. If you imported an earlier version, this GitHub update does not update your n8n copy automatically. Import the new file into a separate workflow and select your own credentials again. Keep the old copy paused so both copies do not process the same email.
 4. Exports have no credentials, presenter Sheet ID or execution data. Keep the new copy unpublished until setup is complete. Use fictional data only.
@@ -19,7 +19,7 @@ Product means questions, suggestions or complaints about coffee/equipment. It is
 
 1. **1. New [KAAPI-DEMO] Email:** select your Gmail credential. Keep the unread filter, `subject:"[KAAPI-DEMO]"`, Simplify off and one-minute polling.
 2. **Google Gemini Model** or **Anthropic Claude Model:** select the matching provider credential. The prepared models are `models/gemini-3.5-flash-lite` and `claude-opus-5-5`; use an accessible model if the displayed model is unavailable, then retest. API access is separate from a chat subscription.
-3. Download [Kaapi-Support-Log.csv](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/Kaapi-Support-Log.csv). In a new blank Google spreadsheet use **File > Import > Upload** to import it, then rename the spreadsheet **Kaapi Support Log**. Google Sheets saves automatically. Row 1 must be exactly: `time`, `sender`, `category`, `draft_reply`. In **5. Log to Kaapi Support Log**, select your Google credential, document and tab. Keep Append Row and the supplied four mappings.
+3. Download [Kaapi-Support-Log.csv](https://github.com/becomefde/fde-support-agent/releases/download/v1.1.0/Kaapi-Support-Log.csv). In a new blank Google spreadsheet use **File > Import > Upload** to import it, then rename the spreadsheet **Kaapi Support Log**. Google Sheets saves automatically. Row 1 must be exactly: `time`, `sender`, `category`, `draft_reply`. In **5. Log to Kaapi Support Log**, select your Google credential, document and tab. Keep Append Row and the supplied four mappings.
 4. Create or choose **two channels in your own Slack workspace**: `#support` and `#product-insights`. Ensure the connected n8n app/user can post to both; invite the app if your workspace requires it.
 5. Open **7a. Post #product-insights**: select your Slack credential and your product-insights channel. Open **7b. Post #support (All Other Categories)**: select the same Slack credential and your support channel. Imported names must resolve in your workspace; select another channel if you use different names.
 6. Keep the prompt, parser and validation nodes. Do not rename nodes without updating expressions that reference their names.
