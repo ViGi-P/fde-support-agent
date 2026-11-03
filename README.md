@@ -33,13 +33,14 @@ Never paste keys or passwords into Slack, GitHub, Sheets or a help screenshot. U
 
 ## 2. Download the files
 
-Click a download link and save the file. If your browser displays JSON/CSV text instead, use **Ctrl+S on Windows / Command+S on Mac** and retain the `.json` or `.csv` extension. Do not save a GitHub webpage as `.html`.
+Click a link below to download the file attachment. Your browser may ask where to save it. Use the downloaded `.json` in n8n and the `.csv` in Google Sheets. If you choose the ZIP, extract it first.
 
 | File | Direct download | What to do with it |
 |---|---|---|
-| **Gemini workflow — recommended for attendees** | [Download kaapi-day1-gemini.json](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/kaapi-day1-gemini.json) | Import into your own n8n workflow |
-| **Claude workflow — optional** | [Download kaapi-day1-claude.json](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/kaapi-day1-claude.json) | Use instead of Gemini if you have Anthropic API access |
-| **Google Sheets starter** | [Download Kaapi-Support-Log.csv](https://github.com/becomefde/fde-support-agent/raw/refs/heads/main/day1/Kaapi-Support-Log.csv) | Import into a new Google Sheet using the steps below |
+| **Gemini workflow — recommended for attendees** | [Download kaapi-day1-gemini.json](https://github.com/becomefde/fde-support-agent/releases/download/v1.1.0/kaapi-day1-gemini.json) | Import into your own n8n workflow |
+| **Claude workflow — optional** | [Download kaapi-day1-claude.json](https://github.com/becomefde/fde-support-agent/releases/download/v1.1.0/kaapi-day1-claude.json) | Use instead of Gemini if you have Anthropic API access |
+| **Google Sheets starter** | [Download Kaapi-Support-Log.csv](https://github.com/becomefde/fde-support-agent/releases/download/v1.1.0/Kaapi-Support-Log.csv) | Import into a new Google Sheet using the steps below |
+| **All starter files in one ZIP** | [Download Kaapi-Day1-Starter.zip](https://github.com/becomefde/fde-support-agent/releases/download/v1.1.0/Kaapi-Day1-Starter.zip) | Extract first, then choose one JSON and import the CSV |
 
 **Latest JSON update: 3 November — every valid category now appears in Slack.** Product goes to `#product-insights`; refund, delivery and other go to `#support`. Configure both Slack posting nodes. Older imported workflows do not update automatically.
 
