@@ -1,3 +1,5 @@
+> **Day 1 configuration update — v2.0.0:** Use [the current six-step guide](../day1/BUILD-GUIDE.md) for import and connection. It is the complete Day 1 import and connection sequence. Fill the four values in Workshop Setup, reuse credentials across the listed nodes, and run Check setup before testing an email.
+
 # Before the FDE webinar
 
 Complete these checks before the live build. Use a laptop; Windows and Mac use the same Day 1 browser instructions.
@@ -30,13 +32,15 @@ Download the [Google Sheets starter CSV](https://github.com/becomefde/fde-suppor
 
 `time | sender | category | draft_reply`
 
-After choosing the document and tab in n8n, set **Mapping Column Mode = Map Automatically** on node 5. The supplied Edit Fields node already outputs these four exact names. Empty manual Values to Send cause the error "At least one value has to be added under Values to Send".
+Paste the Sheet URL and exact bottom tab name into **Workshop Setup**. Select the same Google Sheets credential on **Check Sheet headers** and **5. Log to Kaapi Support Log**. Keep the prepared destination expressions and append settings unchanged; change destinations only in Workshop Setup.
 
 In n8n Cloud, use the managed **Sign in with Google** connection for Gmail and Sheets. Follow the displayed authorization prompts yourself. This supported path does not require creating a custom Google OAuth client in Cloud Console.
 
 ## Prepare Slack channels
 
-Create or choose `#support` and `#product-insights` in your own workspace. Make sure the n8n integration can post to both. After importing the latest JSON, select your Slack credential and channel on **both** Slack posting nodes. Product goes to product-insights; refund, delivery and other go to support.
+Create/open `#support` and `#product-insights` in your own workspace. Add the connected n8n app/user to both. Copy their **Channel IDs** from channel details → About, or use their full channel links. Paste them into Workshop Setup. Reuse the SAME Slack credential/workspace across both channel-check nodes and both posting nodes.
+
+Run **Execute dropdown → From Check setup** and inspect READY before your email test. This verifies headers and channel access without AI calls or posts; your first email verifies write/post permissions.
 
 ## Prepare the Gemini API
 
