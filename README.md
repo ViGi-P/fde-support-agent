@@ -42,37 +42,32 @@ Click a link below to download the file attachment. Your browser may ask where t
 | **Google Sheets starter** | [Download Kaapi-Support-Log.csv](https://github.com/becomefde/fde-support-agent/releases/latest/download/Kaapi-Support-Log.csv) | Import into a new Google Sheet using the steps below |
 | **All starter files in one ZIP** | [Download Kaapi-Day1-Starter.zip](https://github.com/becomefde/fde-support-agent/releases/latest/download/Kaapi-Day1-Starter.zip) | Extract first, then choose one JSON and import the CSV |
 
-**Current release: v2.0.0 — fresh-import setup redesign.** Both workflows use one **Workshop Setup** node for your Sheet URL, tab name and two Slack channel IDs. A manual **Check setup** path verifies Sheet headers and Slack access before AI runs. The prepared append node avoids the newer Values to Send column mapper that reset during fresh-account setup. **Re-import into a new blank workflow; old copies do not update.**
+**Current release: v3.0.0 — use destination dropdowns.** Re-import into a NEW blank workflow. Old copies do not update automatically.
 
-## 3. Turn the CSV into your Google Sheet
+## Create your Sheet
 
-1. Download **Kaapi-Support-Log.csv** above. It contains only the required headers; an empty log is intentional.
-2. Open a **new blank Google spreadsheet** from [Google Sheets](https://sheets.google.com/).
-3. Choose **File → Import → Upload**, browse for the downloaded CSV and select it.
-4. Import into this new blank spreadsheet. If choosing **Replace spreadsheet**, use it only on the blank spreadsheet you just created. Keep automatic separator detection and click **Import data**.
-5. Rename the spreadsheet **Kaapi Support Log**. Confirm row 1 has four separate columns:
+Download the [starter CSV](https://github.com/becomefde/fde-support-agent/releases/latest/download/Kaapi-Support-Log.csv). Open a NEW blank spreadsheet in the Google account you will connect to n8n. Choose **File → Import → Upload** and import it into that blank spreadsheet. Google saves automatically. Confirm four separate cells in row 1:
 
-   | A | B | C | D |
-   |---|---|---|---|
-   | time | sender | category | draft_reply |
+| A | B | C | D |
+|---|---|---|---|
+| time | sender | category | draft_reply |
 
-6. Google Sheets saves automatically to your Drive. **You do not need to press Save.** Keep the spreadsheet link and note the tab name displayed at the bottom.
-7. Paste the spreadsheet URL and exact bottom tab name into **Workshop Setup**. The prepared Sheet nodes read their destinations from there. Select only your Google credential in each Sheet node; keep destination expressions and mapping unchanged.
+Select this spreadsheet and its tab from node 5's lists. No URL or tab name needs to be typed. Use your own Sheet with edit access.
 
-If the CSV import is unavailable, type those exact four headers into row 1 of a blank Sheet; the result is the same. The fictional `orders.csv` and `tickets.csv` are future exercises, **not** this Day 1 output log.
+## Connect and select — v3.0.0
 
-## 4. Import, connect and run Check setup
+**Import ONE JSON into a NEW blank workflow.** No Workshop Setup node, copied Sheet URLs, channel IDs, typed tab names or separate setup-check run.
 
-Follow the [six-step Day 1 guide](day1/BUILD-GUIDE.md) in order. It is the current configuration guide for v2.0.0.
+1. **Gmail trigger:** select your Gmail credential. Keep Simplify OFF.
+2. **Google Gemini Model / Anthropic Claude Model:** select the matching API credential.
+3. **5. Log to Kaapi Support Log:** select your Google Sheets credential. Choose **Document → From list → your spreadsheet**, then **Sheet → From list → its tab**. Keep the prepared automatic Data Mode and node version.
+4. In your own Slack workspace, create/open **#support** and **#product-insights**. Allow the connected n8n app/user to post in both. If needed, open channel details → **Integrations → Add apps → n8n.cloud** (or the name of your connected app). Workspace admins may need to approve it.
+5. **7a. Post #product-insights:** select your Slack credential, then **Channel → From list → product-insights**.
+6. **7b. Post #support (All Other Categories):** select the SAME Slack credential, then **Channel → From list → support**.
 
-1. Import ONE JSON into a **new blank workflow**.
-2. Select your Gmail and model credentials. Reuse your Google Sheets credential in **Check Sheet headers** and **5. Log to Kaapi Support Log**. Reuse your Slack credential in both **Check … channel** nodes and both **7a/7b Post** nodes. That is **8 selectors, using 4 account connections**.
-3. Create/open your own **#support** and **#product-insights**. Add the connected Slack app/user to both. Copy each channel's **ID** from channel details → About (or copy its full channel link).
-4. Open **Workshop Setup**. Fill `sheet_url`, `sheet_tab`, `product_channel_id`, `support_channel_id`. Use IDs from the same workspace as your Slack credential. A `#channel-name` alone will not work.
-5. Arrow beside **Execute workflow → From Check setup - click Execute workflow**. Open the **READY** node and confirm the checks passed. This reads the Sheet and channels without model calls, rows or Slack posts. Your email test verifies write/post permissions.
-6. Test a new matching email, inspect the actual row and Slack message, then publish **only one provider workflow per inbox**. Keep old copies unpublished.
+**5 credential selectors use 4 account connections.** The dropdowns store IDs automatically. Connecting an account does not automatically create the Sheet/channels or grant permission to them.
 
-**Keep the prepared Sheet destination expressions and append-node settings unchanged.** Change destinations only in Workshop Setup. No presenter destination IDs, saved credentials or pinned execution data are included in the public JSONs.
+[Full setup and troubleshooting guide](day1/BUILD-GUIDE.md).
 
 ## 5. Check that it works
 
@@ -110,4 +105,4 @@ Models use **cloud APIs throughout**. Days 2 and 3 executable exercises and test
 - [Day 1 presentation PDF](Day1-Presentation.pdf) — teaching visuals. Its earlier refund-only routing screenshots are superseded by the all-category instructions above.
 - [Workshop data](kaapi-data/) — fictional tickets, orders, policies, FAQs and evaluation cases for later exercises.
 
-**Verification, 3 November:** v2 was imported into new blank n8n Cloud workflows in the signed-in webinar account. Sheet headers and both Slack channels passed setup checks. The product-feedback, refund and Hinglish delivery fixtures were then processed through the real Gemini/Claude APIs, Google Sheets and Slack; both providers saved three rows and posted one product message plus two support messages. A changed destination with only the four starter headers also accepted a new row. A deliberately invalid Slack ID was stopped by preflight with actionable setup guidance before AI. Seventeen local checks cover configuration errors, item pairing, sanitization and route structure. These are clean-import tests using existing connected accounts, not independently created attendee accounts. Each attendee must connect their own accounts and run setup + email tests. Provider quotas and permissions remain account-specific.
+**Validation status:** v3 simplifies the destination setup around the previously tested provider prompts, strict parser, category routing and supported automatic Sheet append. The new dropdown imports are being handed over for attendee testing. Previous tests with both real provider APIs, Sheets and Slack do not constitute fresh-account verification of v3. Run the four email cases in your own connected accounts before publishing.
