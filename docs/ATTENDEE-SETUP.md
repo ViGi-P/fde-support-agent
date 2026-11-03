@@ -26,9 +26,11 @@ Current n8n documentation describes a 14-day trial with 1,000 executions. This i
 
 ## Prepare Google Sheets and connections
 
-Download the [Google Sheets starter CSV](https://github.com/becomefde/fde-support-agent/releases/download/v1.1.0/Kaapi-Support-Log.csv). Open a new blank Google spreadsheet, use **File > Import > Upload**, and import the CSV into the blank spreadsheet. Rename it `Kaapi Support Log`; Google Sheets saves automatically to Drive. Confirm these exact headers in row 1:
+Download the [Google Sheets starter CSV](https://github.com/becomefde/fde-support-agent/releases/latest/download/Kaapi-Support-Log.csv). Open a new blank Google spreadsheet, use **File > Import > Upload**, and import the CSV into the blank spreadsheet. Rename it `Kaapi Support Log`; Google Sheets saves automatically to Drive. Confirm these exact headers in row 1:
 
 `time | sender | category | draft_reply`
+
+After choosing the document and tab in n8n, set **Mapping Column Mode = Map Automatically** on node 5. The supplied Edit Fields node already outputs these four exact names. Empty manual Values to Send cause the error "At least one value has to be added under Values to Send".
 
 In n8n Cloud, use the managed **Sign in with Google** connection for Gmail and Sheets. Follow the displayed authorization prompts yourself. This supported path does not require creating a custom Google OAuth client in Cloud Console.
 
