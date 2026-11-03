@@ -60,7 +60,7 @@ Select this spreadsheet and its tab from node 5's lists. No URL or tab name need
 
 1. **Gmail trigger:** select your Gmail credential. Keep Simplify OFF.
 2. **Google Gemini Model / Anthropic Claude Model:** select the matching API credential.
-3. **5. Log to Kaapi Support Log:** select your Google Sheets credential. Choose **Document → From list → your spreadsheet**, then **Sheet → From list → its tab**. Keep the prepared automatic Data Mode and node version.
+3. **5. Log to Kaapi Support Log:** select your Google Sheets credential. Choose **Document → From list → your spreadsheet**, then **Sheet → From list → its tab**. **After choosing the tab, set Data Mode → Auto-Map Input Data to Columns LAST.** n8n can reset this option when a destination changes; keep the prepared node version.
 4. In your own Slack workspace, create/open **#support** and **#product-insights**. Allow the connected n8n app/user to post in both. If needed, open channel details → **Integrations → Add apps → n8n.cloud** (or the name of your connected app). Workspace admins may need to approve it.
 5. **7a. Post #product-insights:** select your Slack credential, then **Channel → From list → product-insights**.
 6. **7b. Post #support (All Other Categories):** select the SAME Slack credential, then **Channel → From list → support**.
@@ -105,4 +105,4 @@ Models use **cloud APIs throughout**. Days 2 and 3 executable exercises and test
 - [Day 1 presentation PDF](Day1-Presentation.pdf) — teaching visuals. Its earlier refund-only routing screenshots are superseded by the all-category instructions above.
 - [Workshop data](kaapi-data/) — fictional tickets, orders, policies, FAQs and evaluation cases for later exercises.
 
-**Validation status:** v3 simplifies the destination setup around the previously tested provider prompts, strict parser, category routing and supported automatic Sheet append. The new dropdown imports are being handed over for attendee testing. Previous tests with both real provider APIs, Sheets and Slack do not constitute fresh-account verification of v3. Run the four email cases in your own connected accounts before publishing.
+**Webinar-account verification:** Claude v3 and Gemini v3 both processed the approved coffee-feedback fixture through their real provider APIs. Two populated Sheet rows and the corresponding product-channel Slack posts were verified. Saved configuration was checked for five credentials, correct destinations, automatic mapping and no pinned test data. For a fresh import, choose the Sheet/tab first and set Auto-Map LAST as shown above. Attendees still need their own account permissions and live email test.
