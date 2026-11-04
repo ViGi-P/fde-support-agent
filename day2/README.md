@@ -1,124 +1,114 @@
-# Day 2 - Give Kaapi knowledge and tools
+# Day 2 — Give Kaapi knowledge, decisions and tools
 
-**Current download: v4.0.1 - ticket-input fix.** If you downloaded v4.0.0, replace/import the new **02 ticket helper**, connect its Sheet and publish it. In your existing **03 Agent -> create_ticket**, select the new helper and enable all four **Defined by agent** inputs after selection. RAG does not need to be rebuilt. Imported copies do not update automatically.
+**Current version: v4.0.2 — ticket input fix + Slack alerts.**
 
-**Two different tests:** to check only Sheets, run the helper's **TEST HELPER - fictional sample** branch; it supplies explicit test data and writes one labelled SETUP TEST row. To process a support request, use **03 Agent -> Open chat**. An empty real tool call returns **ticket_saved: false** with the missing fields and setup instructions, and writes no Sheet row. It does not invent a summary or reply.
+Build one support agent that answers from company documents, looks up an order, checks refund rules, saves a ticket in Google Sheets and alerts your Slack support team. Use **n8n Cloud in your browser** on Windows or Mac.
 
-Today you will build an agent that answers from company documents, looks up an order, checks refund rules and saves a support ticket. **Use n8n Cloud in your browser on Windows or Mac.** No Python, terminal, local model or separate vector database account is needed for these exercises.
+**The flow:** Customer chat → decision → retrieve knowledge → use tools → save ticket in Sheets → notify Slack.
 
-**Follow this order: 01 RAG -> 02 ticket-saving helper -> 03 agent with tools.** Keep each in a separate workflow. Your Day 1 workflow can stay as it is. Day 2 uses n8n's editor chat for immediate testing; it does not wait for an email.
+## Already imported an older Day 2 version?
+
+Replace **02 Ticket Helper** and your provider's **03 Agent** with the downloads below. Reconnect their credentials. Publish 02; select it in 03 create_ticket, then enable its four **Defined by agent** inputs. **01 RAG does not need replacing.** Existing imports do not update automatically.
 
 ## 1. Have these ready
 
-- Your own active n8n Cloud instance.
-- Your Gemini API credential from Day 1. It is used for **embeddings as well as generation**. Your project needs access/quota for the configured chat model and `gemini-embedding-001`.
-- Your Google Sheets credential and Day 1 log, with `time`, `sender`, `category`, `draft_reply` in four separate cells in row 1.
-- Optional: Anthropic API access/credits for the Claude versions. **The Claude versions also use Gemini for embeddings**, so keep the Gemini connection.
+- Your own active n8n Cloud account.
+- A Gemini API credential with access/quota for the chat and embedding models. Claude users need Anthropic API access too; both routes use Gemini for embeddings.
+- Your Day 1 Google Sheet and Google Sheets connection. Row 1 must contain four headers: `time`, `sender`, `category`, `draft_reply`.
+- Your Slack connection and one channel such as **#support**. Reuse your Day 1 channel. The connected app/user must be able to post there.
 
-Use fictional workshop questions and orders. API keys belong in n8n credentials. Each participant uses their own key/project; provider quotas and charges apply. If a model is unavailable, select an available model in the appropriate node; use the same embedding model for loading and querying, and reload the knowledge after changing it.
+No local model, terminal or separate vector database account is needed. Keep API keys in n8n credentials. Use fictional workshop data and your own API project.
 
-## 2. Download your files
+## 2. Download the files
 
-These links download attachments. Import the `.json` files into **new, separate blank workflows** with the workflow menu **... -> Import from File**. Extract the ZIP before importing. Importing does not connect your accounts automatically; check the selected credentials.
+Choose **Gemini OR Claude**, and import each JSON into a separate blank workflow using **… → Import from File**.
 
-| Order | Attendee Gemini route | Claude alternative |
+| Import order | Gemini | Claude alternative |
 |---|---|---|
-| 01 - knowledge and sources | [Download RAG - Gemini](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-01-rag-gemini.json) | [Download RAG - Claude](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-01-rag-claude.json) |
-| 02 - shared ticket helper | [Download ticket tool](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-02-ticket-tool.json) | Use the same helper |
-| 03 - decisions and tools | [Download agent - Gemini](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-03-agent-gemini.json) | [Download agent - Claude](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-03-agent-claude.json) |
+| 01 — Learn from company knowledge | [Download RAG](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-01-rag-gemini.json) | [Download RAG](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-01-rag-claude.json) |
+| 02 — Save ticket and notify Slack | [Download shared Ticket Helper](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-02-ticket-tool.json) | Same helper |
+| 03 — Make decisions and use tools | [Download Agent](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-03-agent-gemini.json) | [Download Agent](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-03-agent-claude.json) |
 
-[Download all Day 2 files in one ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/Kaapi-Day2-Starter.zip) · [Sheet starter, only if you missed Day 1](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/Kaapi-Support-Log.csv)
+**[Download the complete Day 2 ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/Kaapi-Day2-Starter.zip)** · [Day 1 Sheet starter CSV](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/Kaapi-Support-Log.csv)
 
-Choose one provider's RAG and agent files, plus the shared helper. Gemini attendees need three workflow imports in total. You can rename them, but use names you can recognise in the workflow list.
+Extract the ZIP before importing JSON. If you missed Day 1, create a blank Google Sheet, then use **File → Import → Upload** to import the CSV. Check the four headers are separate cells in row 1.
 
-## 3. Exercise 01 - answer from company knowledge
+## 3. Exercise 01 — Answer using company knowledge
 
-1. Import **01 RAG - Gemini** into a new blank workflow.
-2. Open **Embeddings - select Gemini credential**. Select your Day 1 Gemini credential. Keep the prepared embedding model if your project supports it.
-3. Open **Reply Model - Gemini**. Select the same Gemini credential and a supported chat model.
-4. Save the workflow with **Ctrl+S / Command+S**.
-5. Close any node panel. Click **Execute workflow**. This runs the upper **LOAD KNOWLEDGE** branch. Wait for **C. Knowledge ready** to turn green.
-6. Click **Open chat** at the bottom of the editor. Type: **Can I return an opened bag of coffee?** Press Enter.
-7. The answer should include the arrival-damage exception, reporting within **48 hours**, and a **photo**, citing `policies.md#Returns`.
-8. Open **2. Retrieve top 3 chunks** to see what was found. Open **3. Show retrieved context** to inspect the exact source text supplied to the model.
+1. Open **01 RAG**. Select Gemini in **Embeddings**, and your chosen provider in **Reply Model**.
+2. Save. Click **Execute workflow** to run the upper **LOAD KNOWLEDGE** branch. Wait for **C. Knowledge ready**.
+3. Click **Open chat**. Ask: **Can I return an opened bag of coffee?**
+4. Check the answer mentions arrival damage, reporting within **48 hours**, a **photo**, and the source `policies.md#Returns`.
+5. Open **Retrieve top 3 chunks** to see the text retrieved from the company knowledge.
 
-The upper branch contains the fictional policies/FAQs, converts sections to embeddings and stores them. The lower branch embeds the question, retrieves three relevant chunks and asks the model to answer from that evidence. No policy answer is hard-coded into the answering prompt.
+The sample policies and FAQ are already embedded in node A. No document upload is required. They are chunked, embedded and retrieved; the answering prompt does not contain a fixed policy answer.
 
-**Checkpoint:** a correct answer with a relevant source. Try **How long does a refund take?** and **Which grind should I use for a French press?**
+**If retrieval is empty, run LOAD KNOWLEDGE again.** The in-memory store is temporary. Use the same embedding model for loading and querying; reload after changing it. Loading 01 does not load 03.
 
-The documents are embedded in node A, so no upload is required. To experiment, edit one sample policy there, reload knowledge, then repeat the question. In-memory storage is temporary: **after an n8n restart or empty retrieval, execute LOAD KNOWLEDGE again**. Each imported workflow has its own automatic memory key. Loading knowledge in 01 does not load it for 03.
+## 4. Exercise 02 — Connect Sheets and Slack
 
-## 4. Exercise 02 - configure the real ticket-writing tool
+The helper has one clear main path:
 
-1. Import **02 Save Support Ticket** into another new blank workflow.
-2. Open **Append ticket to your Day 1 Sheet**.
-3. Select your **Google Sheets credential**.
-4. Choose **Document -> From list -> your own Day 1 spreadsheet**.
-5. Choose **Sheet -> From list -> the tab containing your four headers**. Your spreadsheet need not be named Kaapi Support Log.
-6. **LAST, set Data Mode -> Auto-Map Input Data to Columns.** Choosing a document/tab can reset this option. Do this after both selections.
-7. Close the panel and save. Click **Execute workflow from TEST HELPER - fictional sample** (use the trigger selector if needed). This deliberate setup test writes one fictional `[SETUP TEST]` row. Confirm **Confirm saved ticket** returns `ok: true` and verify the actual Sheet row.
-8. Click **Publish** and confirm the version. The helper must show **Published** before the agent can call it. Use **03 Open chat** for actual workshop requests. The **When called by agent** trigger expects values from the agent; it is not the standalone test branch.
+**Validate ticket → Save Sheet row → Notify Slack → Confirm result**
 
-If you missed Day 1, create a blank Google Sheet and import the supplied CSV using **File -> Import -> Upload**. Confirm the four headers first.
+1. Open **02 Save Support Ticket**.
+2. In **Append ticket to your Day 1 Sheet**, select your Google Sheets credential, **Document → From list**, then **Sheet → From list**. Choose your own Sheet and tab.
+3. **LAST: set Data Mode → Auto-Map Input Data to Columns.** Selecting a document/tab can reset the mapping. No Sheet URL needs to be pasted.
+4. In **Notify support in Slack**, select your Slack credential and **Channel → From list → #support** (or your own channel). No channel ID needs to be copied.
+5. Save. Click **Execute workflow from TEST HELPER - fictional sample**. This deliberate test writes one labelled `[SETUP TEST]` Sheet row and posts one Slack alert.
+6. Open **Confirm Sheet and Slack**. Check `ticket_saved: true`, `slack_notified: true` and the same `KAAPI-…` ticket ID in the actual Sheet and Slack.
+7. Click **Publish**, confirm the version and check the helper says **Published**.
 
-**What it does:** accepts summary, priority, category and draft; validates them; writes a real row; returns a ticket ID only after the append succeeds. It uses the same four columns as Day 1. The `draft_reply` cell contains a ticket ID, priority, summary and the draft. `sender` is deliberately the fictional `day2-demo@example.com`.
+The Sheet remains the ticket register. Its existing four columns are preserved; `draft_reply` contains the ticket ID, priority, open/review status, summary, order reference and draft. Slack receives the ticket ID, priority, category, order, summary and draft so a human can act. No customer email or refund is sent.
 
-## 5. Exercise 03 - decisions, retrieval and tools
+## 5. Exercise 03 — Let the agent use tools
 
-1. Import **03 Agent with Tools - Gemini** into a third new blank workflow.
-2. Select your Gemini credential in **Reply Model - Gemini** and **Embeddings - select Gemini credential**. The reply model serves triage, format repair and the agent.
-3. Open **create_ticket**. Under **Workflow -> From list**, choose your saved **02 Save Support Ticket** helper.
-4. **After choosing the workflow**, n8n refreshes and clears its input mappings. Click the sparkle button **Let the model define this parameter** beside **summary**, **priority**, **category** and **draft_reply**. **All four must say Defined by agent.** You do not have to type expressions.
-5. Close the panel and save.
-6. Click **Execute workflow** and wait for this workflow's **C. Knowledge ready** to turn green.
-7. Click **Open chat** and run the three tests below. Each message is independent; include the order ID in each order-related question.
+1. Open **03 Agent**. Select your reply-model credential and Gemini embedding credential.
+2. Open **create_ticket → Workflow → From list** and select your published **02 Save Support Ticket**.
+3. **After selecting the workflow**, click the sparkle beside **summary**, **priority**, **category** and **draft_reply**. All four must say **Defined by agent**. Selecting a different helper can reset these mappings.
+4. Save. Click **Execute workflow** to load this workflow's knowledge. Wait for **C. Knowledge ready**.
+5. Click **Open chat** and run the tests below. Include the order ID in each order-related message; each message is independent.
 
-| Copy this message into chat | What to verify |
+| Paste into Open chat | Expected result |
 |---|---|
-| Which grind should I use for a French press? | Product route; coarse grind with a FAQ source; no unnecessary order lookup or ticket |
-| Bhai mera order KC1051 abhi tak nahi aaya, kab tak aayega? | Delivery route; `get_order` returns shipped; no invented arrival date; ticket saved in your Sheet |
-| Third time asking. KC1063 was wrong AND late. Refund me now or I'm posting on Twitter. | Refund route; high frustration; order lookup; eligibility check; HIGH ticket; human approval because the order is INR 8,999 |
+| Which grind should I use for a French press? | Coarse grind, FAQ source, no unnecessary support ticket. |
+| Bhai mera order KC1051 abhi tak nahi aaya, kab tak aayega? | Delivery route; order is shipped; no invented arrival date; normal ticket in Sheets and Slack. |
+| Third time asking. KC1063 was wrong AND late. Refund me now or I'm posting on Twitter. | Refund route; high frustration; order lookup and eligibility check; HIGH ticket in Sheets and Slack; human approval required for INR 8,999. |
 
-**Checkpoint:** inspect the actual Sheet. A saved ticket has a `KAAPI-...` ID and a populated draft. A green agent node alone is not proof of a saved row. In **7. Reply sources and tool trace**, inspect `decision`, `retrieved_chunks` and `tool_trace`. The n8n execution also shows each tool's inputs and outputs.
+Open **7. Reply sources and tool trace** to inspect the decision, retrieved evidence and tool calls. A green agent node alone is not proof of a saved ticket; check the helper result and actual destinations.
 
-The three tools are:
+### The three tools
 
-- **get_order:** exact order-ID lookup in the embedded fictional `orders.csv` fixture. Unknown IDs return not found.
-- **check_refund_eligibility:** code applies the return window, damage/photo evidence and approval threshold. The model cannot change the rule by requesting a different amount or inventing dates.
-- **create_ticket:** calls the helper and writes to the selected Sheet. It does not issue money, send a customer email or post to Slack.
+- **get_order:** exact order-ID lookup in the fictional orders fixture.
+- **check_refund_eligibility:** code checks dated evidence, damage/photo conditions and the INR 5,000 approval threshold. The model cannot override it.
+- **create_ticket:** validates four ticket fields, writes Sheets, then notifies Slack. It reports those two outcomes separately.
 
-**Policy thresholds:** unopened within 7 days; arrival damage within 48 hours with a photo; refunds above INR 5,000 need human approval. A value of exactly INR 5,000 does not trigger that threshold. All refunds remain drafts for human review in this workshop.
+Unopened items: within **7 days**. Arrival damage: within **48 hours**, with a **photo**. Amounts **above INR 5,000** need human approval. No tool approves or issues a refund. Evidence comes from [explicit fictional fixtures](refund-evidence.json), not from order dates or model guesses.
 
-The added [refund evidence fixture](refund-evidence.json) explicitly supplies fictional delivery/report dates and damage/photo facts for selected orders. These facts do not come from `order_date` or the model. Tests use those fixed report dates, so the same case works on different workshop dates. Unlisted orders have unknown evidence and must request more information.
+## 6. If something fails
 
-## 6. Extra tests and troubleshooting
-
-[Copy-paste test cases and expected outcomes](TEST-CASES.md).
-
-| Symptom | Action |
+| What you see | What to do |
 |---|---|
-| Chat does nothing / no question was supplied | Use **Open chat** inside this workflow's editor; type a message and press Enter. The Execute button alone loads knowledge. |
-| Empty retrieval / knowledge missing | Close chat, run the upper LOAD KNOWLEDGE branch, then open chat again in the same workflow. Recheck embedding credential/model. |
-| Model or embedding 404/permission error | Select a model your API project supports. Generation and embeddings have separate model settings. Keep the embedding model identical for insert and retrieval, then reload. |
-| 429 / resource exhausted | Pause requests and check your own provider quota/billing. Do not keep rerunning a write request. Different projects may have different limits. |
-| Ticket needs a summary and draft_reply | This is the old v4.0.0 validator. Import the v4.0.1 helper. Use its explicit TEST HELPER branch for a standalone Sheet check. For agent calls, select the published helper in create_ticket and enable all four sparkle inputs AFTER selection. |
-| ticket_saved: false / SETUP HELP - ticket not saved | Read `missing_fields` and `invalid_fields`. The helper did not receive a valid ticket and intentionally wrote nothing. In 03 create_ticket, all four inputs must say **Defined by agent**. Test the real request from 03 Open chat. |
-| create_ticket says no workflow / invalid inputs | Save and publish the helper first, select it in create_ticket, then click the four sparkle buttons after selection. All four inputs must say **Defined by agent**. |
-| Workflow is not active and cannot be executed | Open **02 Save Support Ticket**, click **Publish**, confirm, then rerun the agent question. Saving alone is insufficient for the callable helper on this Cloud version. |
-| Sheet has no values / Fields to Send error | In the helper, choose your document and tab first, then set **Auto-Map Input Data to Columns LAST**. Confirm exact headers. |
-| Sheet permission error | Check the original Sheets node OUTPUT, the connected Google account and edit access. AI settings do not repair Google permissions. |
-| No ticket for a brewing FAQ | Expected. The agent creates tickets for actionable support cases, not every knowledge question. |
-| Reply is visible but ticket was not saved | Inspect the create_ticket sub-execution and Sheets error. A failed write must not be described as successful. |
-| Repeating a test adds another row | Expected: no persistent deduplication is implemented. Each new tool invocation can add a row. |
-| Chat doesn't remember an earlier order | Each message is independent; repeat the order ID. Conversation memory is outside this exercise. |
-| Unknown/custom node message | Use the current n8n Cloud editor and the supplied files. Do not install an unrelated community node. Share the exact unsupported node name/version for help. |
+| Missing summary/draft/priority/category | In 03 create_ticket select the correct published helper, then enable ALL FOUR Defined by agent fields. v4.0.2 also accepts supplied JSON nested under input, query or ticket. It does not invent missing data. |
+| Sheet Fields to Send error | Choose document and tab first; then set Auto-Map LAST. Check the four exact headers. |
+| Sheet permission error | Inspect the original Google Sheets error. Check the selected Google account and edit access. Slack is not called before the Sheet save succeeds. |
+| Slack channel_not_found / not_in_channel | Select the channel FROM LIST using the correct workspace credential. Ensure the connected user/app is a member and can post; invite the app if necessary. |
+| ticket_saved:true, slack_notified:false | The row is saved but notification failed or is unconfirmed. The helper reports the saved ticket ID and does not claim the team was notified. Fix Slack. Do not repeat the agent request just to notify, because a full new request creates another ticket. |
+| No knowledge / empty retrieval | Execute LOAD KNOWLEDGE in the workflow you are using, then reopen chat. Reload after a restart. |
+| Helper is inactive / cannot execute | Save AND Publish 02, then select it in create_ticket. |
+| Model/embedding 404 or permission error | Select an available model for your API project. Loading and querying must use the same embedding model. |
+| 429 / quota exceeded | Pause and check provider quota/billing. Avoid repeatedly rerunning write requests. |
 
-## 7. What you learned and what comes next
+**Retries:** only the Slack node retries its own failed send (up to three attempts). Those attempts do not repeat the Sheet append. A full new agent/helper run can create another ticket; persistent request deduplication is outside this workshop. If a Slack timeout leaves delivery uncertain, check the channel before sending again.
 
-**Chunking -> cloud embeddings -> vector retrieval -> grounded answers -> structured decisions -> tool calling -> deterministic business rules -> saved actions.**
+**Outcome fields:** `ticket_saved` confirms the Sheet write; `slack_notified` confirms the Slack response; `ok:true` means both. The final reply must use the returned ticket ID and must not claim an escalation before notification is confirmed.
 
-This core implementation uses the selected cloud LLM for the triage decision. It is **not a Laya implementation or performance benchmark**. No Laya key or local model installation is required. The frustration score is an estimated 1-5 rubric, not a calibrated probability.
+## 7. What you learn
 
-The Simple Vector Store is for this fictional teaching exercise. It is temporary, accessible to users of the same n8n instance and unsuitable as a production customer-data store. Order lookup is a demo fixture without identity verification. Day 3 will add evaluation and operational checks. [n8n storage limitations](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstoreinmemory/).
+**Chunking → embeddings → retrieval → grounded answers → structured decisions → tool calling → deterministic rules → saved tickets → team notifications.**
 
-The RAG and agent exercises can run in the editor without publishing a public chat. **Publish the Sheet helper** so it can be called by the agent. It has a sub-workflow trigger, not a public chat. Every API call and Sheet write uses your own connections.
+The triage model is your selected cloud LLM. The frustration score is an estimated 1–5 rubric. This is not a Laya implementation or benchmark. There is no local-model installation.
+
+The Simple Vector Store is temporary and intended here for fictional teaching data. Order lookup has no customer identity verification. Keep editor chat private; a public chat deployment is not needed. Day 3 adds evaluation and operational checks.
+
+Reference: [n8n workflow-tool inputs](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolworkflow/) · [n8n Slack node](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.slack/)

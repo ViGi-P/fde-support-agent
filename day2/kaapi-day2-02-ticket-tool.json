@@ -54,7 +54,7 @@
         -200
       ],
       "parameters": {
-        "jsCode": "return [{json:{summary:'[SETUP TEST] Fictional product-feedback ticket to verify Google Sheets',priority:'normal',category:'product',draft_reply:'Thanks for sharing this fictional workshop feedback. Our team will review it. Team Kaapi'}}];"
+        "jsCode": "return [{json:{input:JSON.stringify({summary:'[SETUP TEST] Fictional product-feedback ticket to verify Sheets and Slack',priority:'normal',category:'product',draft_reply:'Thanks for sharing this fictional workshop feedback. Our team will review it. Team Kaapi'})}}];"
       }
     },
     {
@@ -67,7 +67,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "const raw=$json||{};\nconst object=v=>{if(v&&typeof v==='object'&&!Array.isArray(v))return v;if(typeof v==='string'&&v.length<30000){try{const p=JSON.parse(v);if(p&&typeof p==='object'&&!Array.isArray(p))return p;}catch{}}return null;};\nconst candidates=[raw,object(raw.query),object(raw.ticket)].filter(Boolean);\nconst x=candidates.find(v=>typeof v.summary==='string'&&v.summary.trim()&&typeof v.draft_reply==='string'&&v.draft_reply.trim())||raw;\nconst clean=k=>typeof x[k]==='string'?x[k].trim():'';\nconst ticket={summary:clean('summary'),priority:clean('priority').toLowerCase(),category:clean('category').toLowerCase(),draft_reply:clean('draft_reply')};\nconst missing=['summary','draft_reply','priority','category'].filter(k=>!ticket[k]);\nconst invalid=[];if(ticket.category&&!['refund','delivery','product','other'].includes(ticket.category))invalid.push('category must be refund, delivery, product or other');if(ticket.priority&&!['normal','high'].includes(ticket.priority))invalid.push('priority must be normal or high');\nif(missing.length||invalid.length)return [{json:{valid:false,ok:false,error:'missing_or_invalid_ticket_inputs',missing_fields:missing,invalid_fields:invalid,ticket_saved:false,refund_approved:false,customer_email_sent:false,message:'Ticket NOT saved. The helper needs values from the agent. In 03 Agent open create_ticket, choose this published helper, then click the sparkle beside summary, priority, category and draft_reply so ALL FOUR say Defined by agent. Test from 03 Open chat. To test only this helper, use TEST HELPER - fictional sample.',output:'Ticket NOT saved. Missing: '+(missing.join(', ')||'none')+'. '+invalid.join('; ')+' Configure all four create_ticket inputs as Defined by agent, then test from 03 Open chat. For a standalone Sheet check, execute TEST HELPER - fictional sample.'}}];\nreturn [{json:{valid:true,ticket}}];"
+        "jsCode": "const object=v=>{if(v&&typeof v==='object'&&!Array.isArray(v))return v;if(typeof v==='string'&&v.length<=30000){try{const p=JSON.parse(v.trim().replace(/^```(?:json)?\\s*|\\s*```$/g,''));return p&&typeof p==='object'&&!Array.isArray(p)?p:null;}catch{}}return null;};\nconst queue=[{value:object($json),depth:0}],seen=new Set(),candidates=[];\nwhile(queue.length){const {value:v,depth}=queue.shift();if(!v||seen.has(v))continue;seen.add(v);candidates.push(v);if(depth<4)for(const key of ['input','query','ticket','json']){const p=object(v[key]);if(p)queue.push({value:p,depth:depth+1});}}\nconst keys=['summary','draft_reply','priority','category'];\nconst score=v=>keys.filter(k=>typeof v[k]==='string'&&v[k].trim()).length;\nconst x=candidates.sort((a,b)=>score(b)-score(a))[0]||{};\nconst clean=k=>typeof x[k]==='string'?x[k].trim():'';\nconst ticket={summary:clean('summary'),priority:clean('priority').toLowerCase(),category:clean('category').toLowerCase(),draft_reply:clean('draft_reply')};\nconst missing=keys.filter(k=>!ticket[k]);const invalid=[];\nif(ticket.category&&!['refund','delivery','product','other'].includes(ticket.category))invalid.push('category must be refund, delivery, product or other');\nif(ticket.priority&&!['normal','high'].includes(ticket.priority))invalid.push('priority must be normal or high');\nif(ticket.summary.length>3000||ticket.draft_reply.length>6000)invalid.push('summary/draft exceeds workshop size limit');\nif(missing.length||invalid.length)return [{json:{valid:false,ok:false,error:'missing_or_invalid_ticket_inputs',missing_fields:missing,invalid_fields:invalid,ticket_saved:false,slack_notified:false,refund_approved:false,customer_email_sent:false,message:'Ticket NOT saved. Select the published 02 helper in 03 create_ticket, then enable Defined by agent for summary, priority, category and draft_reply AFTER selection. Test from 03 Open chat. Use TEST HELPER for the explicit standalone sample.',output:'Ticket NOT saved. Missing: '+(missing.join(', ')||'none')+'. '+invalid.join('; ')}}];\nconst order_id=(typeof x.order_id==='string'?x.order_id.toUpperCase().match(/\\bKC\\d{4}\\b/):null)?.[0]||ticket.summary.toUpperCase().match(/\\bKC\\d{4}\\b/)?.[0]||null;\nreturn [{json:{valid:true,ticket:{...ticket,order_id}}}];"
       }
     },
     {
@@ -114,7 +114,7 @@
         -80
       ],
       "parameters": {
-        "jsCode": "const x=$json.ticket;const ticket_id='KAAPI-'+$execution.id;return [{json:{time:new Date().toISOString(),sender:'day2-demo@example.com',category:x.category,draft_reply:`[${ticket_id}] [${x.priority.toUpperCase()}] ${x.summary}\\n\\nDRAFT - HUMAN REVIEW\\n${x.draft_reply}`}}];"
+        "jsCode": "const x=$json.ticket;const ticket_id='KAAPI-'+$execution.id;return [{json:{time:new Date().toISOString(),sender:'day2-demo@example.com',category:x.category,draft_reply:`[${ticket_id}] [${x.priority.toUpperCase()}] [OPEN - HUMAN REVIEW] ${x.summary}\\nOrder: ${x.order_id||'not supplied'}\\n\\nDRAFT - NOT SENT\\n${x.draft_reply}`}}];"
       }
     },
     {
@@ -156,7 +156,7 @@
         -80
       ],
       "parameters": {
-        "jsCode": "const x=$('Validate ticket input').first().json.ticket;return [{json:{ok:true,ticket_saved:true,ticket_id:'KAAPI-'+$execution.id,saved_to:'Your selected Google Sheet',priority:x.priority,category:x.category,refund_approved:false,customer_email_sent:false,message:'Support ticket saved. Draft requires human review.'}}];"
+        "jsCode": "const x=$('Validate ticket input').first().json.ticket;return [{json:{ok:false,ticket_saved:true,slack_notified:false,ticket_id:'KAAPI-'+$execution.id,created_at:$('Prepare four Sheet columns').first().json.time,status:'open_human_review',...x,refund_approved:false,customer_email_sent:false,saved_to:'Your selected Google Sheet',message:'Ticket saved. Slack notification is the next step.'}}];"
       }
     },
     {
@@ -182,9 +182,62 @@
         -650
       ],
       "parameters": {
-        "content": "## v4.0.1 - Real ticket creation\n1. Select your Google Sheets credential, Document and Sheet from lists.\n2. **LAST: Data Mode -> Auto-Map Input Data to Columns.** Headers: time, sender, category, draft_reply.\n3. **Save AND Publish** this helper.\n4. For a standalone Sheet check, click Execute workflow: **TEST HELPER - fictional sample** supplies labelled test inputs and writes one SETUP TEST row.\n5. For real workshop requests, use **03 Agent -> Open chat**. In create_ticket choose this helper, then enable all FOUR sparkle buttons.\n\nEmpty real calls return SETUP HELP and write nothing. No customer text is invented to fill missing inputs. No email, Slack post or refund is sent.",
-        "width": 1100,
-        "height": 350
+        "content": "## v4.0.2 — Sheets + Slack tickets\n1. Append node: select Sheets credential, Document and Sheet. Set Auto-Map LAST. Keep Day 1 headers time, sender, category, draft_reply.\n2. Notify support in Slack: select your Slack credential and ONE support channel FROM LIST. The app/user must have access.\n3. Save AND Publish. Test via TEST HELPER: writes one labelled fictional row AND Slack alert.\n4. In 03 create_ticket select this helper, then enable all FOUR Defined by agent inputs.\n\nInput accepts flat fields or input/query/ticket JSON wrappers. Missing real data writes nothing. Sheet success is preserved if Slack fails. No email/refund is sent.\n\nMain flow: Validate → Save Sheet row → Notify Slack → Confirm. Slack retries only its own step (up to 3 tries), never the Sheet write. A fresh full request creates a new ticket.",
+        "width": 1120,
+        "height": 380
+      }
+    },
+    {
+      "id": "3e6632d6-d000-4683-8767-ccc88a5f2350",
+      "name": "Prepare Slack notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        -80
+      ],
+      "parameters": {
+        "jsCode": "const x=$json;const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');if(x.ticket_saved!==true||!/^KAAPI-\\d+$/.test(x.ticket_id||''))throw new Error('No confirmed saved ticket; Slack was not called.');const lines=['🎫 *'+esc(x.ticket_id)+' — '+esc(x.priority.toUpperCase())+' PRIORITY*','*Status:* Open — human review','*Category:* '+esc(x.category),'*Order:* '+esc(x.order_id||'Not supplied'),'*Summary:* '+esc(x.summary),'*Action:* Human review required. No refund has been approved or issued.','','*Draft reply — NOT sent to customer:*',esc(x.draft_reply)];return [{json:{...x,slack_text:lines.join('\\n')}}];"
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "text": "={{ $json.slack_text }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "68dc1d38-ff8a-4676-ab56-791f9fff2866",
+      "name": "Notify support in Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        1920,
+        -80
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "id": "70018e72-d82c-4121-9543-074388abee21",
+      "name": "Confirm Sheet and Slack",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        -160
+      ],
+      "parameters": {
+        "jsCode": "const saved=$('Prepare Slack notification').first().json;const r=$json;const ts=r.message_timestamp||r.ts||r.message?.ts;if(r.error||r.ok===false||!ts||!r.channel)return [{json:{...saved,ok:false,slack_notified:false,error:'slack_notification_unconfirmed',slack_text:undefined,slack_error:typeof r.error==='string'?r.error:(r.error?.message||r.message||'See Slack output'),message:'Ticket saved; Slack notification could not be confirmed. The ticket row remains saved. Fix the Slack credential/channel; do not rerun the agent just to retry notification.',output:'Ticket '+saved.ticket_id+' saved in Sheets. Slack delivery unconfirmed.'}}];const {slack_text,...safe}=saved;return [{json:{...safe,ok:true,slack_notified:true,slack_channel:r.channel,slack_message_ts:ts,message:'Support ticket saved in Sheets and posted to Slack for human review. No refund or customer email sent.',output:'Ticket '+saved.ticket_id+' saved in Sheets and notified in Slack. Human review required.'}}];"
       }
     }
   ],
@@ -267,6 +320,39 @@
         [
           {
             "node": "Confirm saved ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirm saved ticket": {
+      "main": [
+        [
+          {
+            "node": "Prepare Slack notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Slack notification": {
+      "main": [
+        [
+          {
+            "node": "Notify support in Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify support in Slack": {
+      "main": [
+        [
+          {
+            "node": "Confirm Sheet and Slack",
             "type": "main",
             "index": 0
           }
