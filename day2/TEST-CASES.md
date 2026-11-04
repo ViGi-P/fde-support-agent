@@ -31,3 +31,11 @@ The exact wording and frustration estimate can vary by provider. Check the factu
 - Fictional standalone sample: one labelled row, one Slack alert with the same ID.
 - Slack unavailable after save: ticket_saved:true, slack_notified:false, no success claim. Only Slack retries; the append is not repeated.
 - KC1063: high priority, human approval required for INR 8,999; no refund issued.
+
+
+## v4.0.3 — real handoff regression
+
+- Select the newly published helper in create_ticket through the UI. Do NOT configure four fields.
+- Run the KC1051 delivery chat through the actual agent. Its single input string must reach the helper validator and return ticket_saved:true, slack_notified:true.
+- Repeat with the other provider and KC1063. Human approval remains required; no refund issued.
+- Check helper trigger: inputSource passthrough (Accept all data). Check tool mapper schema/value empty. This prevents n8n replacing the payload with four empty mapped fields.

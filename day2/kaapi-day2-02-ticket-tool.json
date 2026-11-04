@@ -11,26 +11,7 @@
         0
       ],
       "parameters": {
-        "workflowInputs": {
-          "values": [
-            {
-              "name": "summary",
-              "type": "string"
-            },
-            {
-              "name": "priority",
-              "type": "string"
-            },
-            {
-              "name": "category",
-              "type": "string"
-            },
-            {
-              "name": "draft_reply",
-              "type": "string"
-            }
-          ]
-        }
+        "inputSource": "passthrough"
       }
     },
     {
@@ -67,7 +48,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "const object=v=>{if(v&&typeof v==='object'&&!Array.isArray(v))return v;if(typeof v==='string'&&v.length<=30000){try{const p=JSON.parse(v.trim().replace(/^```(?:json)?\\s*|\\s*```$/g,''));return p&&typeof p==='object'&&!Array.isArray(p)?p:null;}catch{}}return null;};\nconst queue=[{value:object($json),depth:0}],seen=new Set(),candidates=[];\nwhile(queue.length){const {value:v,depth}=queue.shift();if(!v||seen.has(v))continue;seen.add(v);candidates.push(v);if(depth<4)for(const key of ['input','query','ticket','json']){const p=object(v[key]);if(p)queue.push({value:p,depth:depth+1});}}\nconst keys=['summary','draft_reply','priority','category'];\nconst score=v=>keys.filter(k=>typeof v[k]==='string'&&v[k].trim()).length;\nconst x=candidates.sort((a,b)=>score(b)-score(a))[0]||{};\nconst clean=k=>typeof x[k]==='string'?x[k].trim():'';\nconst ticket={summary:clean('summary'),priority:clean('priority').toLowerCase(),category:clean('category').toLowerCase(),draft_reply:clean('draft_reply')};\nconst missing=keys.filter(k=>!ticket[k]);const invalid=[];\nif(ticket.category&&!['refund','delivery','product','other'].includes(ticket.category))invalid.push('category must be refund, delivery, product or other');\nif(ticket.priority&&!['normal','high'].includes(ticket.priority))invalid.push('priority must be normal or high');\nif(ticket.summary.length>3000||ticket.draft_reply.length>6000)invalid.push('summary/draft exceeds workshop size limit');\nif(missing.length||invalid.length)return [{json:{valid:false,ok:false,error:'missing_or_invalid_ticket_inputs',missing_fields:missing,invalid_fields:invalid,ticket_saved:false,slack_notified:false,refund_approved:false,customer_email_sent:false,message:'Ticket NOT saved. Select the published 02 helper in 03 create_ticket, then enable Defined by agent for summary, priority, category and draft_reply AFTER selection. Test from 03 Open chat. Use TEST HELPER for the explicit standalone sample.',output:'Ticket NOT saved. Missing: '+(missing.join(', ')||'none')+'. '+invalid.join('; ')}}];\nconst order_id=(typeof x.order_id==='string'?x.order_id.toUpperCase().match(/\\bKC\\d{4}\\b/):null)?.[0]||ticket.summary.toUpperCase().match(/\\bKC\\d{4}\\b/)?.[0]||null;\nreturn [{json:{valid:true,ticket:{...ticket,order_id}}}];"
+        "jsCode": "const object=v=>{if(v&&typeof v==='object'&&!Array.isArray(v))return v;if(typeof v==='string'&&v.length<=30000){try{const p=JSON.parse(v.trim().replace(/^```(?:json)?\\s*|\\s*```$/g,''));return p&&typeof p==='object'&&!Array.isArray(p)?p:null;}catch{}}return null;};\nconst queue=[{value:object($json),depth:0}],seen=new Set(),candidates=[];\nwhile(queue.length){const {value:v,depth}=queue.shift();if(!v||seen.has(v))continue;seen.add(v);candidates.push(v);if(depth<4)for(const key of ['input','query','ticket','json']){const p=object(v[key]);if(p)queue.push({value:p,depth:depth+1});}}\nconst keys=['summary','draft_reply','priority','category'];\nconst score=v=>keys.filter(k=>typeof v[k]==='string'&&v[k].trim()).length;\nconst x=candidates.sort((a,b)=>score(b)-score(a))[0]||{};\nconst clean=k=>typeof x[k]==='string'?x[k].trim():'';\nconst ticket={summary:clean('summary'),priority:clean('priority').toLowerCase(),category:clean('category').toLowerCase(),draft_reply:clean('draft_reply')};\nconst missing=keys.filter(k=>!ticket[k]);const invalid=[];\nif(ticket.category&&!['refund','delivery','product','other'].includes(ticket.category))invalid.push('category must be refund, delivery, product or other');\nif(ticket.priority&&!['normal','high'].includes(ticket.priority))invalid.push('priority must be normal or high');\nif(ticket.summary.length>3000||ticket.draft_reply.length>6000)invalid.push('summary/draft exceeds workshop size limit');\nif(missing.length||invalid.length)return [{json:{valid:false,ok:false,error:'missing_or_invalid_ticket_inputs',missing_fields:missing,invalid_fields:invalid,input_received_keys:Object.keys($json||{}),ticket_saved:false,slack_notified:false,refund_approved:false,customer_email_sent:false,message:'Ticket NOT saved. Use BOTH v4.0.3 files: the helper trigger must Accept all data, and 03 create_ticket must point to that published helper with no four-field mappings. Do not mix an old agent with this helper. Test from 03 Open chat. Use TEST HELPER for the explicit standalone sample.',output:'Ticket NOT saved. Missing: '+(missing.join(', ')||'none')+'. '+invalid.join('; ')}}];\nconst order_id=(typeof x.order_id==='string'?x.order_id.toUpperCase().match(/\\bKC\\d{4}\\b/):null)?.[0]||ticket.summary.toUpperCase().match(/\\bKC\\d{4}\\b/)?.[0]||null;\nreturn [{json:{valid:true,ticket:{...ticket,order_id}}}];"
       }
     },
     {
@@ -182,7 +163,7 @@
         -650
       ],
       "parameters": {
-        "content": "## v4.0.2 — Sheets + Slack tickets\n1. Append node: select Sheets credential, Document and Sheet. Set Auto-Map LAST. Keep Day 1 headers time, sender, category, draft_reply.\n2. Notify support in Slack: select your Slack credential and ONE support channel FROM LIST. The app/user must have access.\n3. Save AND Publish. Test via TEST HELPER: writes one labelled fictional row AND Slack alert.\n4. In 03 create_ticket select this helper, then enable all FOUR Defined by agent inputs.\n\nInput accepts flat fields or input/query/ticket JSON wrappers. Missing real data writes nothing. Sheet success is preserved if Slack fails. No email/refund is sent.\n\nMain flow: Validate → Save Sheet row → Notify Slack → Confirm. Slack retries only its own step (up to 3 tries), never the Sheet write. A fresh full request creates a new ticket.",
+        "content": "## v4.0.3 — No ticket-field mapping\n1. Select Sheets credential, Document and Sheet. Set Auto-Map LAST. Keep Day 1 headers.\n2. Select Slack credential + support channel FROM LIST.\n3. Save AND Publish this helper.\n4. In the NEW 03 agent create_ticket choose this helper. That is all: NO four-field mappings or sparkle buttons.\n\nThe trigger uses Accept all data. Validate ticket input parses the supplied JSON and checks all four required fields BEFORE any write. TEST HELPER supplies an explicit fictional sample.\n\nMain flow: Validate → Sheet save → Slack alert → Confirm. No refund/customer email is sent. Only Slack retries its own step; a full new request can create another ticket.",
         "width": 1120,
         "height": 380
       }

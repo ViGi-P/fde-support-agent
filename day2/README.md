@@ -1,6 +1,6 @@
 # Day 2 — Give Kaapi knowledge, decisions and tools
 
-**Current version: v4.0.2 — ticket input fix + Slack alerts.**
+**Current version: v4.0.3 — direct ticket handoff + Slack alerts. No four-field mapping.**
 
 Build one support agent that answers from company documents, looks up an order, checks refund rules, saves a ticket in Google Sheets and alerts your Slack support team. Use **n8n Cloud in your browser** on Windows or Mac.
 
@@ -8,7 +8,7 @@ Build one support agent that answers from company documents, looks up an order, 
 
 ## Already imported an older Day 2 version?
 
-Replace **02 Ticket Helper** and your provider's **03 Agent** with the downloads below. Reconnect their credentials. Publish 02; select it in 03 create_ticket, then enable its four **Defined by agent** inputs. **01 RAG does not need replacing.** Existing imports do not update automatically.
+Replace **02 Ticket Helper** and your provider's **03 Agent** with the downloads below. Reconnect their credentials. Publish 02; select it in the NEW 03 create_ticket. **No four-field mappings or sparkle buttons are required. Replace BOTH 02 and 03; do not mix old/new versions.** **01 RAG does not need replacing.** Existing imports do not update automatically.
 
 ## 1. Have these ready
 
@@ -25,11 +25,11 @@ Choose **Gemini OR Claude**, and import each JSON into a separate blank workflow
 
 | Import order | Gemini | Claude alternative |
 |---|---|---|
-| 01 — Learn from company knowledge | [Download RAG](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-01-rag-gemini.json) | [Download RAG](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-01-rag-claude.json) |
-| 02 — Save ticket and notify Slack | [Download shared Ticket Helper](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-02-ticket-tool.json) | Same helper |
-| 03 — Make decisions and use tools | [Download Agent](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-03-agent-gemini.json) | [Download Agent](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/kaapi-day2-03-agent-claude.json) |
+| 01 — Learn from company knowledge | [Download RAG](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.3/kaapi-day2-01-rag-gemini.json) | [Download RAG](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.3/kaapi-day2-01-rag-claude.json) |
+| 02 — Save ticket and notify Slack | [Download shared Ticket Helper](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.3/kaapi-day2-02-ticket-tool.json) | Same helper |
+| 03 — Make decisions and use tools | [Download Agent](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.3/kaapi-day2-03-agent-gemini.json) | [Download Agent](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.3/kaapi-day2-03-agent-claude.json) |
 
-**[Download the complete Day 2 ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/Kaapi-Day2-Starter.zip)** · [Day 1 Sheet starter CSV](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.2/Kaapi-Support-Log.csv)
+**[Download the complete Day 2 ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.3/Kaapi-Day2-Starter.zip)** · [Day 1 Sheet starter CSV](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.3/Kaapi-Support-Log.csv)
 
 Extract the ZIP before importing JSON. If you missed Day 1, create a blank Google Sheet, then use **File → Import → Upload** to import the CSV. Check the four headers are separate cells in row 1.
 
@@ -46,6 +46,8 @@ The sample policies and FAQ are already embedded in node A. No document upload i
 **If retrieval is empty, run LOAD KNOWLEDGE again.** The in-memory store is temporary. Use the same embedding model for loading and querying; reload after changing it. Loading 01 does not load 03.
 
 ## 4. Exercise 02 — Connect Sheets and Slack
+
+**Why v4.0.3:** the old workflow-input mapper could discard an agent’s supplied JSON when its mappings were cleared. The new tool forwards its single JSON input unchanged; the helper validates the four required fields internally. The standalone sample and real agent now use the same validator.
 
 The helper has one clear main path:
 
@@ -65,7 +67,7 @@ The Sheet remains the ticket register. Its existing four columns are preserved; 
 
 1. Open **03 Agent**. Select your reply-model credential and Gemini embedding credential.
 2. Open **create_ticket → Workflow → From list** and select your published **02 Save Support Ticket**.
-3. **After selecting the workflow**, click the sparkle beside **summary**, **priority**, **category** and **draft_reply**. All four must say **Defined by agent**. Selecting a different helper can reset these mappings.
+3. Confirm **Workflow Inputs** has no four-field mapping to configure. The helper trigger is prepared as **Accept all data**. Do not add fields or sparkle expressions. If four empty fields still appear, you selected an old helper or imported the old 03 file; use BOTH v4.0.3 files.
 4. Save. Click **Execute workflow** to load this workflow's knowledge. Wait for **C. Knowledge ready**.
 5. Click **Open chat** and run the tests below. Include the order ID in each order-related message; each message is independent.
 
@@ -81,7 +83,7 @@ Open **7. Reply sources and tool trace** to inspect the decision, retrieved evid
 
 - **get_order:** exact order-ID lookup in the fictional orders fixture.
 - **check_refund_eligibility:** code checks dated evidence, damage/photo conditions and the INR 5,000 approval threshold. The model cannot override it.
-- **create_ticket:** validates four ticket fields, writes Sheets, then notifies Slack. It reports those two outcomes separately.
+- **create_ticket:** forwards a single JSON input to the helper, which validates the four required ticket fields, writes Sheets, then notifies Slack. It reports those two outcomes separately.
 
 Unopened items: within **7 days**. Arrival damage: within **48 hours**, with a **photo**. Amounts **above INR 5,000** need human approval. No tool approves or issues a refund. Evidence comes from [explicit fictional fixtures](refund-evidence.json), not from order dates or model guesses.
 
@@ -89,7 +91,7 @@ Unopened items: within **7 days**. Arrival damage: within **48 hours**, with a *
 
 | What you see | What to do |
 |---|---|
-| Missing summary/draft/priority/category | In 03 create_ticket select the correct published helper, then enable ALL FOUR Defined by agent fields. v4.0.2 also accepts supplied JSON nested under input, query or ticket. It does not invent missing data. |
+| Missing summary/draft/priority/category | Replace BOTH 02 and 03 with v4.0.3. Publish 02, then choose it in 03 create_ticket. The trigger must Accept all data and the tool must have no four-field mapping. Inspect input_received_keys if needed. Missing data is never invented. |
 | Sheet Fields to Send error | Choose document and tab first; then set Auto-Map LAST. Check the four exact headers. |
 | Sheet permission error | Inspect the original Google Sheets error. Check the selected Google account and edit access. Slack is not called before the Sheet save succeeds. |
 | Slack channel_not_found / not_in_channel | Select the channel FROM LIST using the correct workspace credential. Ensure the connected user/app is a member and can post; invite the app if necessary. |
