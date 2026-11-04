@@ -1,0 +1,147 @@
+{
+  "name": "Kaapi Day 2 - 02 Save Support Ticket",
+  "nodes": [
+    {
+      "id": "26e3e2e8-e29a-43e8-8d63-e7a0d7c58607",
+      "name": "When called by agent",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "summary",
+              "type": "string"
+            },
+            {
+              "name": "priority",
+              "type": "string"
+            },
+            {
+              "name": "category",
+              "type": "string"
+            },
+            {
+              "name": "draft_reply",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6342fa9d-9fe3-424c-a2ac-f8e25daccf73",
+      "name": "Prepare four Sheet columns",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const x=$json;const summary=String(x.summary||'').trim();const draft=String(x.draft_reply||'').trim();const category=String(x.category||'');const priority=String(x.priority||'').toLowerCase();if(!summary||!draft)throw new Error('Ticket needs a summary and draft_reply.');if(!['refund','delivery','product','other'].includes(category))throw new Error('Invalid ticket category.');if(!['normal','high'].includes(priority))throw new Error('Ticket priority must be normal or high.');const ticket_id='KAAPI-'+$execution.id;return [{json:{time:new Date().toISOString(),sender:'day2-demo@example.com',category,draft_reply:`[${ticket_id}] [${priority.toUpperCase()}] ${summary}\\n\\nDRAFT - HUMAN REVIEW\\n${draft}`}}];"
+      }
+    },
+    {
+      "id": "d51fcc67-ee13-4f2d-9204-e23c3befa60f",
+      "name": "Append ticket to your Day 1 Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "dataMode": "autoMapInputData",
+        "options": {
+          "cellFormat": "RAW",
+          "handlingExtraData": "error",
+          "useAppend": true
+        }
+      }
+    },
+    {
+      "id": "39d54d7c-da97-4d8a-8126-e253bcbe9e28",
+      "name": "Confirm saved ticket",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const row=$('Prepare four Sheet columns').first().json;return [{json:{ok:true,ticket_id:'KAAPI-'+$execution.id,saved_to:'Your selected Google Sheet',priority:row.draft_reply.includes('[HIGH]')?'high':'normal',category:row.category,refund_approved:false,customer_email_sent:false,message:'Support ticket saved. Draft requires human review.'}}];"
+      }
+    },
+    {
+      "id": "aa4fc172-fe29-4571-94ba-f1f08a4ee89c",
+      "name": "SETUP - Ticket tool",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -350
+      ],
+      "parameters": {
+        "content": "## Exercise 2: Real ticket creation\nSelect your Google Sheets credential. Select **Document From list** and **Sheet From list** using the same Sheet as Day 1.\n**LAST: set Data Mode to Auto-Map Input Data to Columns.** Destination changes may reset it.\nHeaders must be exactly time, sender, category, draft_reply.\n**Save AND Publish this helper.** In Exercise 3 select this workflow in the **create_ticket** tool. Saving alone cannot activate the callable tool.\n\nEach successful tool call creates a real Sheet row. Repeated runs can create duplicates. No customer email, Slack post or refund is sent.",
+        "width": 1050,
+        "height": 290
+      }
+    }
+  ],
+  "connections": {
+    "When called by agent": {
+      "main": [
+        [
+          {
+            "node": "Prepare four Sheet columns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare four Sheet columns": {
+      "main": [
+        [
+          {
+            "node": "Append ticket to your Day 1 Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append ticket to your Day 1 Sheet": {
+      "main": [
+        [
+          {
+            "node": "Confirm saved ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {}
+}

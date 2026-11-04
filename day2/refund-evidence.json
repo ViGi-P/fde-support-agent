@@ -1,0 +1,33 @@
+{
+  "notice": "Fictional workshop evidence added explicitly for Day 2. Evaluate using reported_at, not the computer clock. Unlisted orders have unknown evidence.",
+  "orders": {
+    "KC1042": {
+      "delivered_at": "2026-11-02T12:00:00+05:30",
+      "reported_at": "2026-11-03T10:00:00+05:30",
+      "unopened": false,
+      "arrived_damaged": true,
+      "photo_provided": true
+    },
+    "KC1063": {
+      "delivered_at": "2026-11-02T12:00:00+05:30",
+      "reported_at": "2026-11-03T12:00:00+05:30",
+      "unopened": false,
+      "arrived_damaged": true,
+      "photo_provided": true
+    },
+    "KC1069": {
+      "delivered_at": "2026-10-18T12:00:00+05:30",
+      "reported_at": "2026-11-03T12:00:00+05:30",
+      "unopened": true,
+      "arrived_damaged": false,
+      "photo_provided": false
+    },
+    "KC1064": {
+      "delivered_at": "2026-11-01T12:00:00+05:30",
+      "reported_at": "2026-11-04T12:00:00+05:30",
+      "unopened": false,
+      "arrived_damaged": true,
+      "photo_provided": true
+    }
+  }
+}
