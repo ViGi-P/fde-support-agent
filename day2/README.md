@@ -6,9 +6,7 @@ Build one support agent that answers from company documents, looks up an order, 
 
 **The flow:** Customer chat → decision → retrieve knowledge → use tools → save ticket in Sheets → notify Slack.
 
-## Already imported an older Day 2 version?
 
-Replace **02 Ticket Helper** and your provider's **03 Agent** with the downloads below. Reconnect their credentials. Publish 02; select it in the NEW 03 create_ticket. **No four-field mappings or sparkle buttons are required. Replace BOTH 02 and 03; do not mix old/new versions.** **01 RAG does not need replacing.** Existing imports do not update automatically.
 
 ## 1. Have these ready
 
