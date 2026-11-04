@@ -8,7 +8,7 @@
 
 Learn **chunking, cloud embeddings, vector retrieval, answers with sources, structured decisions and tool calling**. The agent looks up a fictional order, applies refund rules and saves a real support ticket to your Sheet. Day 2 uses **Open chat in the n8n editor** for immediate testing. Publish the ticket helper before calling it; select Auto-Map LAST in its Sheets node, and enable the four model-defined inputs after selecting the helper in the agent.
 
-[Download the Day 2 starter ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.0/Kaapi-Day2-Starter.zip) · [Day 2 test cases](day2/TEST-CASES.md).
+[Download the Day 2 starter ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/Kaapi-Day2-Starter.zip) · [Day 2 test cases](day2/TEST-CASES.md).
 
 ## Day 1 - email automation
 
