@@ -1,5 +1,7 @@
 > **Current Day 1 setup: v3.0.0.** Use [the connect-and-select guide](../day1/BUILD-GUIDE.md). No Workshop Setup or copied IDs/URLs.
 
+> **Day 2 is available:** [open the Day 2 guide and downloads](../day2/README.md). RAG, structured decisions and tools run in n8n Cloud on Windows/Mac. Reuse your Gemini API and Google Sheets connections; no Python or local model is required. Claude generation is optional and still uses Gemini embeddings.
+
 # Before the FDE webinar
 
 Complete these checks before the live build. Use a laptop; Windows and Mac use the same Day 1 browser instructions.
@@ -73,7 +75,7 @@ The provider variants must each pass the workshop tests before being described a
 
 ## Before Days 2 and 3
 
-- Day 2: keep your cloud API access available. Python 3.11 and an editor are planned for the knowledge and tool exercises; tested packages and Windows/Mac commands will be supplied with that implementation.
+- Day 2: follow [the browser-based exercises](../day2/README.md). Import 01 RAG, 02 ticket helper and 03 agent as separate workflows. Keep your Gemini key/project quota and Day 1 Google Sheet ready. Publish the ticket helper, set its Sheets Auto-Map LAST and enable its four model-defined inputs after selecting it in the agent. No new vector database account is required.
 - Day 3: keep the same cloud API access and workshop files. The session covers evaluations, guardrails, human approval, cost and latency.
 - No model downloads are part of the workshop prerequisites. Models are accessed through provider APIs.
 
