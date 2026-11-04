@@ -1,5 +1,9 @@
 # Day 2 - Give Kaapi knowledge and tools
 
+**Current download: v4.0.1 - ticket-input fix.** If you downloaded v4.0.0, replace/import the new **02 ticket helper**, connect its Sheet and publish it. In your existing **03 Agent -> create_ticket**, select the new helper and enable all four **Defined by agent** inputs after selection. RAG does not need to be rebuilt. Imported copies do not update automatically.
+
+**Two different tests:** to check only Sheets, run the helper's **TEST HELPER - fictional sample** branch; it supplies explicit test data and writes one labelled SETUP TEST row. To process a support request, use **03 Agent -> Open chat**. An empty real tool call returns **ticket_saved: false** with the missing fields and setup instructions, and writes no Sheet row. It does not invent a summary or reply.
+
 Today you will build an agent that answers from company documents, looks up an order, checks refund rules and saves a support ticket. **Use n8n Cloud in your browser on Windows or Mac.** No Python, terminal, local model or separate vector database account is needed for these exercises.
 
 **Follow this order: 01 RAG -> 02 ticket-saving helper -> 03 agent with tools.** Keep each in a separate workflow. Your Day 1 workflow can stay as it is. Day 2 uses n8n's editor chat for immediate testing; it does not wait for an email.
@@ -19,11 +23,11 @@ These links download attachments. Import the `.json` files into **new, separate 
 
 | Order | Attendee Gemini route | Claude alternative |
 |---|---|---|
-| 01 - knowledge and sources | [Download RAG - Gemini](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.0/kaapi-day2-01-rag-gemini.json) | [Download RAG - Claude](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.0/kaapi-day2-01-rag-claude.json) |
-| 02 - shared ticket helper | [Download ticket tool](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.0/kaapi-day2-02-ticket-tool.json) | Use the same helper |
-| 03 - decisions and tools | [Download agent - Gemini](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.0/kaapi-day2-03-agent-gemini.json) | [Download agent - Claude](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.0/kaapi-day2-03-agent-claude.json) |
+| 01 - knowledge and sources | [Download RAG - Gemini](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-01-rag-gemini.json) | [Download RAG - Claude](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-01-rag-claude.json) |
+| 02 - shared ticket helper | [Download ticket tool](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-02-ticket-tool.json) | Use the same helper |
+| 03 - decisions and tools | [Download agent - Gemini](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-03-agent-gemini.json) | [Download agent - Claude](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/kaapi-day2-03-agent-claude.json) |
 
-[Download all Day 2 files in one ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.0/Kaapi-Day2-Starter.zip) · [Sheet starter, only if you missed Day 1](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.0/Kaapi-Support-Log.csv)
+[Download all Day 2 files in one ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/Kaapi-Day2-Starter.zip) · [Sheet starter, only if you missed Day 1](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.1/Kaapi-Support-Log.csv)
 
 Choose one provider's RAG and agent files, plus the shared helper. Gemini attendees need three workflow imports in total. You can rename them, but use names you can recognise in the workflow list.
 
@@ -52,7 +56,8 @@ The documents are embedded in node A, so no upload is required. To experiment, e
 4. Choose **Document -> From list -> your own Day 1 spreadsheet**.
 5. Choose **Sheet -> From list -> the tab containing your four headers**. Your spreadsheet need not be named Kaapi Support Log.
 6. **LAST, set Data Mode -> Auto-Map Input Data to Columns.** Choosing a document/tab can reset this option. Do this after both selections.
-7. Close the panel, **save**, then click **Publish** and confirm the version. The helper must show **Published** before the agent can call it. You do not need to manually execute its trigger.
+7. Close the panel and save. Click **Execute workflow from TEST HELPER - fictional sample** (use the trigger selector if needed). This deliberate setup test writes one fictional `[SETUP TEST]` row. Confirm **Confirm saved ticket** returns `ok: true` and verify the actual Sheet row.
+8. Click **Publish** and confirm the version. The helper must show **Published** before the agent can call it. Use **03 Open chat** for actual workshop requests. The **When called by agent** trigger expects values from the agent; it is not the standalone test branch.
 
 If you missed Day 1, create a blank Google Sheet and import the supplied CSV using **File -> Import -> Upload**. Confirm the four headers first.
 
@@ -96,6 +101,8 @@ The added [refund evidence fixture](refund-evidence.json) explicitly supplies fi
 | Empty retrieval / knowledge missing | Close chat, run the upper LOAD KNOWLEDGE branch, then open chat again in the same workflow. Recheck embedding credential/model. |
 | Model or embedding 404/permission error | Select a model your API project supports. Generation and embeddings have separate model settings. Keep the embedding model identical for insert and retrieval, then reload. |
 | 429 / resource exhausted | Pause requests and check your own provider quota/billing. Do not keep rerunning a write request. Different projects may have different limits. |
+| Ticket needs a summary and draft_reply | This is the old v4.0.0 validator. Import the v4.0.1 helper. Use its explicit TEST HELPER branch for a standalone Sheet check. For agent calls, select the published helper in create_ticket and enable all four sparkle inputs AFTER selection. |
+| ticket_saved: false / SETUP HELP - ticket not saved | Read `missing_fields` and `invalid_fields`. The helper did not receive a valid ticket and intentionally wrote nothing. In 03 create_ticket, all four inputs must say **Defined by agent**. Test the real request from 03 Open chat. |
 | create_ticket says no workflow / invalid inputs | Save and publish the helper first, select it in create_ticket, then click the four sparkle buttons after selection. All four inputs must say **Defined by agent**. |
 | Workflow is not active and cannot be executed | Open **02 Save Support Ticket**, click **Publish**, confirm, then rerun the agent question. Saving alone is insufficient for the callable helper on this Cloud version. |
 | Sheet has no values / Fields to Send error | In the helper, choose your document and tab first, then set **Auto-Map Input Data to Columns LAST**. Confirm exact headers. |
