@@ -1,6 +1,16 @@
 # FDE workshop | Start here
 
-**One link. All the Day 1 preparation and downloads.**
+**One link. Workshop preparation, downloads and attendee steps.**
+
+## Day 2 - start here
+
+**[Open the complete Day 2 attendee guide and downloads](day2/README.md).** Follow three stages: **01 RAG -> 02 save-ticket helper -> 03 agent with tools**. Gemini and Claude versions are available. Use your existing n8n Cloud, Gemini API and Google Sheets connections. Both Windows and Mac use the browser; no Python, terminal or local model is required for this Day 2 build.
+
+Learn **chunking, cloud embeddings, vector retrieval, answers with sources, structured decisions and tool calling**. The agent looks up a fictional order, applies refund rules and saves a real support ticket to your Sheet. Day 2 uses **Open chat in the n8n editor** for immediate testing. Publish the ticket helper before calling it; select Auto-Map LAST in its Sheets node, and enable the four model-defined inputs after selecting the helper in the agent.
+
+[Download the Day 2 starter ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v4.0.0/Kaapi-Day2-Starter.zip) · [Day 2 test cases](day2/TEST-CASES.md).
+
+## Day 1 - email automation
 
 Build a support workflow for **Kaapi & Co.**, a fictional coffee brand. An email arrives, AI classifies it and drafts a reply, Google Sheets records it, and Slack shows the right team what needs attention.
 
@@ -94,7 +104,7 @@ One successful execution follows one Slack branch per valid email. Repeated manu
 | **Day 2 — add business context** | Use company knowledge and order tools | RAG, chunks, API embeddings, retrieval and tool calling |
 | **Day 3 — test and operate it** | Check quality, human approval and cloud operating behaviour | Evals, guardrails, cost, latency and failure handling |
 
-Models use **cloud APIs throughout**. Days 2 and 3 executable exercises and tested setup commands will be added here as those builds are completed. You do not need to install Python before Day 1; Day 2's planned Python/editor setup is described in [the detailed preparation guide](docs/ATTENDEE-SETUP.md).
+Models use **cloud APIs throughout**. [Day 2 exercises and setup](day2/README.md) run in n8n Cloud with no local installation. Day 3 exercises will be added as that build is completed. The [detailed preparation guide](docs/ATTENDEE-SETUP.md) links to the current instructions.
 
 ## Extra references
 
