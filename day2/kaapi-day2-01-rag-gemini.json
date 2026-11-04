@@ -2,7 +2,7 @@
   "name": "Kaapi Day 2 - 01 RAG - Gemini",
   "nodes": [
     {
-      "id": "e6f9a8db-adfc-4ddb-bd95-deb5aae5d859",
+      "id": "e7a2b2e5-607d-4584-b22a-27878198d227",
       "name": "LOAD KNOWLEDGE - run once first",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
@@ -13,7 +13,7 @@
       "parameters": {}
     },
     {
-      "id": "2b48fde4-5548-4c23-97ea-5acc91cc6bdd",
+      "id": "0ee5e1d2-24ae-4c29-936d-674130c61aba",
       "name": "A. Kaapi policies and FAQ chunks",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -26,7 +26,7 @@
       }
     },
     {
-      "id": "5acd894a-e511-44c2-a1fd-289ec3d5d2d5",
+      "id": "4c85c09a-f68c-4aa8-b0f5-4694a23c2654",
       "name": "B. Embed and store knowledge",
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
@@ -45,7 +45,7 @@
       }
     },
     {
-      "id": "3f93e4e5-85c3-4593-8b56-9bda98e68dcf",
+      "id": "94b2f988-8d9b-4188-8b8d-aabf5fe24154",
       "name": "Knowledge Document Loader",
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
@@ -63,7 +63,7 @@
       }
     },
     {
-      "id": "a8da9f41-6ab6-4b6a-9ccc-530c1425ad16",
+      "id": "00d061fe-5bc0-41b7-9b42-8421cb062e7b",
       "name": "Embeddings - select Gemini credential",
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
@@ -76,7 +76,7 @@
       }
     },
     {
-      "id": "d9272e03-333a-4264-a9b6-ff868f26ac55",
+      "id": "62ab3457-dbb6-4011-bb23-748d155127a9",
       "name": "C. Knowledge ready",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -89,7 +89,7 @@
       }
     },
     {
-      "id": "f94038db-2cd5-4062-bfec-71deb14d90bc",
+      "id": "6482303f-e653-43f1-b74d-6afdeea7cec4",
       "name": "Ask Kaapi - Open chat",
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.3,
@@ -105,7 +105,7 @@
       }
     },
     {
-      "id": "4e880536-200c-41b8-8400-9878333635f1",
+      "id": "ccb35088-eca7-4f1d-9a27-ec0d777d0401",
       "name": "1. Capture question",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -118,7 +118,7 @@
       }
     },
     {
-      "id": "c45635a0-5820-41d6-bc62-d9885192c635",
+      "id": "5be5d985-a165-425f-a940-c8b0dc80bf39",
       "name": "2. Retrieve top 3 chunks",
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
@@ -140,7 +140,7 @@
       "alwaysOutputData": true
     },
     {
-      "id": "7fe42d46-5026-4fd6-b992-906dd59aeee9",
+      "id": "25f7b723-edb4-4598-88a5-12b1c1dc71b0",
       "name": "3. Show retrieved context",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -153,7 +153,7 @@
       }
     },
     {
-      "id": "fba80c25-0b6c-49a8-adef-2868e27542a8",
+      "id": "f8b81b95-5e8f-43d2-affa-5d9b22571e33",
       "name": "4. Answer from sources",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
@@ -180,7 +180,7 @@
           "temperature": 0.2
         }
       },
-      "id": "ae123927-7610-4386-a2d6-688f44f35c9a",
+      "id": "c813895e-f6da-4d51-be41-24adc926f0a3",
       "name": "Reply Model - Gemini",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.2,
@@ -190,7 +190,7 @@
       ]
     },
     {
-      "id": "50472a59-d71a-4680-83d6-1dee05f69e56",
+      "id": "3eb6e45f-2ecd-4da7-8ca8-c1e067b6a79b",
       "name": "5. Answer and retrieved sources",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -203,7 +203,7 @@
       }
     },
     {
-      "id": "8d0f3d38-74ff-4f07-9a6e-83ad677f19d9",
+      "id": "9d4296ac-52f4-4d82-988e-56fe8d018d7f",
       "name": "START HERE - RAG",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,

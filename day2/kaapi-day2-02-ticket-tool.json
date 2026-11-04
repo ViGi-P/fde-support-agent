@@ -2,7 +2,7 @@
   "name": "Kaapi Day 2 - 02 Save Support Ticket",
   "nodes": [
     {
-      "id": "26e3e2e8-e29a-43e8-8d63-e7a0d7c58607",
+      "id": "1ce0a208-62ca-4f66-9b60-f01bb5a71c52",
       "name": "When called by agent",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
@@ -34,26 +34,97 @@
       }
     },
     {
-      "id": "6342fa9d-9fe3-424c-a2ac-f8e25daccf73",
+      "id": "9525eda3-fa65-43cd-be9b-d9fad34718ee",
+      "name": "TEST HELPER - fictional sample",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -200
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "16ed8085-e2dd-4f88-baf7-653966192e7b",
+      "name": "Explicit fictional test ticket",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -200
+      ],
+      "parameters": {
+        "jsCode": "return [{json:{summary:'[SETUP TEST] Fictional product-feedback ticket to verify Google Sheets',priority:'normal',category:'product',draft_reply:'Thanks for sharing this fictional workshop feedback. Our team will review it. Team Kaapi'}}];"
+      }
+    },
+    {
+      "id": "129e5881-2104-4e2f-982e-5d105a541879",
+      "name": "Validate ticket input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const raw=$json||{};\nconst object=v=>{if(v&&typeof v==='object'&&!Array.isArray(v))return v;if(typeof v==='string'&&v.length<30000){try{const p=JSON.parse(v);if(p&&typeof p==='object'&&!Array.isArray(p))return p;}catch{}}return null;};\nconst candidates=[raw,object(raw.query),object(raw.ticket)].filter(Boolean);\nconst x=candidates.find(v=>typeof v.summary==='string'&&v.summary.trim()&&typeof v.draft_reply==='string'&&v.draft_reply.trim())||raw;\nconst clean=k=>typeof x[k]==='string'?x[k].trim():'';\nconst ticket={summary:clean('summary'),priority:clean('priority').toLowerCase(),category:clean('category').toLowerCase(),draft_reply:clean('draft_reply')};\nconst missing=['summary','draft_reply','priority','category'].filter(k=>!ticket[k]);\nconst invalid=[];if(ticket.category&&!['refund','delivery','product','other'].includes(ticket.category))invalid.push('category must be refund, delivery, product or other');if(ticket.priority&&!['normal','high'].includes(ticket.priority))invalid.push('priority must be normal or high');\nif(missing.length||invalid.length)return [{json:{valid:false,ok:false,error:'missing_or_invalid_ticket_inputs',missing_fields:missing,invalid_fields:invalid,ticket_saved:false,refund_approved:false,customer_email_sent:false,message:'Ticket NOT saved. The helper needs values from the agent. In 03 Agent open create_ticket, choose this published helper, then click the sparkle beside summary, priority, category and draft_reply so ALL FOUR say Defined by agent. Test from 03 Open chat. To test only this helper, use TEST HELPER - fictional sample.',output:'Ticket NOT saved. Missing: '+(missing.join(', ')||'none')+'. '+invalid.join('; ')+' Configure all four create_ticket inputs as Defined by agent, then test from 03 Open chat. For a standalone Sheet check, execute TEST HELPER - fictional sample.'}}];\nreturn [{json:{valid:true,ticket}}];"
+      }
+    },
+    {
+      "id": "7346106d-6a16-4b69-b59d-5043810d161c",
+      "name": "Valid ticket inputs?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ticket-valid",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "eb636dad-b830-48e6-ae5e-b9cd13509b60",
       "name": "Prepare four Sheet columns",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        260,
-        0
+        960,
+        -80
       ],
       "parameters": {
-        "jsCode": "const x=$json;const summary=String(x.summary||'').trim();const draft=String(x.draft_reply||'').trim();const category=String(x.category||'');const priority=String(x.priority||'').toLowerCase();if(!summary||!draft)throw new Error('Ticket needs a summary and draft_reply.');if(!['refund','delivery','product','other'].includes(category))throw new Error('Invalid ticket category.');if(!['normal','high'].includes(priority))throw new Error('Ticket priority must be normal or high.');const ticket_id='KAAPI-'+$execution.id;return [{json:{time:new Date().toISOString(),sender:'day2-demo@example.com',category,draft_reply:`[${ticket_id}] [${priority.toUpperCase()}] ${summary}\\n\\nDRAFT - HUMAN REVIEW\\n${draft}`}}];"
+        "jsCode": "const x=$json.ticket;const ticket_id='KAAPI-'+$execution.id;return [{json:{time:new Date().toISOString(),sender:'day2-demo@example.com',category:x.category,draft_reply:`[${ticket_id}] [${x.priority.toUpperCase()}] ${x.summary}\\n\\nDRAFT - HUMAN REVIEW\\n${x.draft_reply}`}}];"
       }
     },
     {
-      "id": "d51fcc67-ee13-4f2d-9204-e23c3befa60f",
+      "id": "d7f643e6-6d52-4cc8-a704-f4bfcab7ae34",
       "name": "Append ticket to your Day 1 Sheet",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 3,
       "position": [
-        520,
-        0
+        1200,
+        -80
       ],
       "parameters": {
         "operation": "append",
@@ -76,31 +147,44 @@
       }
     },
     {
-      "id": "39d54d7c-da97-4d8a-8126-e253bcbe9e28",
+      "id": "cb3be5fc-6b17-4a37-be05-5f1cbc1ecbb1",
       "name": "Confirm saved ticket",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
-        0
+        1440,
+        -80
       ],
       "parameters": {
-        "jsCode": "const row=$('Prepare four Sheet columns').first().json;return [{json:{ok:true,ticket_id:'KAAPI-'+$execution.id,saved_to:'Your selected Google Sheet',priority:row.draft_reply.includes('[HIGH]')?'high':'normal',category:row.category,refund_approved:false,customer_email_sent:false,message:'Support ticket saved. Draft requires human review.'}}];"
+        "jsCode": "const x=$('Validate ticket input').first().json.ticket;return [{json:{ok:true,ticket_saved:true,ticket_id:'KAAPI-'+$execution.id,saved_to:'Your selected Google Sheet',priority:x.priority,category:x.category,refund_approved:false,customer_email_sent:false,message:'Support ticket saved. Draft requires human review.'}}];"
       }
     },
     {
-      "id": "aa4fc172-fe29-4571-94ba-f1f08a4ee89c",
+      "id": "5f1406ca-9958-4217-9692-49fd0d8160d4",
+      "name": "SETUP HELP - ticket not saved",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        180
+      ],
+      "parameters": {
+        "jsCode": "return $input.all().map(i=>({json:i.json}));"
+      }
+    },
+    {
+      "id": "a5c08a93-8dd1-45c8-898e-4f25a9988bde",
       "name": "SETUP - Ticket tool",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         0,
-        -350
+        -650
       ],
       "parameters": {
-        "content": "## Exercise 2: Real ticket creation\nSelect your Google Sheets credential. Select **Document From list** and **Sheet From list** using the same Sheet as Day 1.\n**LAST: set Data Mode to Auto-Map Input Data to Columns.** Destination changes may reset it.\nHeaders must be exactly time, sender, category, draft_reply.\n**Save AND Publish this helper.** In Exercise 3 select this workflow in the **create_ticket** tool. Saving alone cannot activate the callable tool.\n\nEach successful tool call creates a real Sheet row. Repeated runs can create duplicates. No customer email, Slack post or refund is sent.",
-        "width": 1050,
-        "height": 290
+        "content": "## v4.0.1 - Real ticket creation\n1. Select your Google Sheets credential, Document and Sheet from lists.\n2. **LAST: Data Mode -> Auto-Map Input Data to Columns.** Headers: time, sender, category, draft_reply.\n3. **Save AND Publish** this helper.\n4. For a standalone Sheet check, click Execute workflow: **TEST HELPER - fictional sample** supplies labelled test inputs and writes one SETUP TEST row.\n5. For real workshop requests, use **03 Agent -> Open chat**. In create_ticket choose this helper, then enable all FOUR sparkle buttons.\n\nEmpty real calls return SETUP HELP and write nothing. No customer text is invented to fill missing inputs. No email, Slack post or refund is sent.",
+        "width": 1100,
+        "height": 350
       }
     }
   ],
@@ -109,7 +193,58 @@
       "main": [
         [
           {
+            "node": "Validate ticket input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TEST HELPER - fictional sample": {
+      "main": [
+        [
+          {
+            "node": "Explicit fictional test ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Explicit fictional test ticket": {
+      "main": [
+        [
+          {
+            "node": "Validate ticket input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate ticket input": {
+      "main": [
+        [
+          {
+            "node": "Valid ticket inputs?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid ticket inputs?": {
+      "main": [
+        [
+          {
             "node": "Prepare four Sheet columns",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SETUP HELP - ticket not saved",
             "type": "main",
             "index": 0
           }

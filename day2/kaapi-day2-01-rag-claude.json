@@ -2,7 +2,7 @@
   "name": "Kaapi Day 2 - 01 RAG - Claude",
   "nodes": [
     {
-      "id": "f1bb5b87-acb7-4915-9992-6bba3579a71d",
+      "id": "95be8965-1714-45f5-b241-59d5842118df",
       "name": "LOAD KNOWLEDGE - run once first",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
@@ -13,7 +13,7 @@
       "parameters": {}
     },
     {
-      "id": "8799e26d-8119-4034-a508-6d16d65564b1",
+      "id": "e003e896-071f-4f6e-9f7f-30590e20c4a9",
       "name": "A. Kaapi policies and FAQ chunks",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -26,7 +26,7 @@
       }
     },
     {
-      "id": "b9302c7e-5561-4a7f-941d-82bf7caa8386",
+      "id": "b0f5ec88-b790-4843-ae08-9e8d9d4e384f",
       "name": "B. Embed and store knowledge",
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
@@ -45,7 +45,7 @@
       }
     },
     {
-      "id": "4f0cba6b-1f90-4b2d-9e57-9e1d8cc935ba",
+      "id": "fa70a553-4d84-44ed-a0fc-492b6976958d",
       "name": "Knowledge Document Loader",
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
@@ -63,7 +63,7 @@
       }
     },
     {
-      "id": "a23e20fb-401a-4f52-8a29-b77238c594ed",
+      "id": "41fb1c00-20f2-4a38-9571-f3d2e08fe98b",
       "name": "Embeddings - select Gemini credential",
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
@@ -76,7 +76,7 @@
       }
     },
     {
-      "id": "cd20f4c9-6686-48c7-b137-e6fe8855c053",
+      "id": "d8b43cb9-00a2-40e5-879c-9f1466e15fdd",
       "name": "C. Knowledge ready",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -89,7 +89,7 @@
       }
     },
     {
-      "id": "1e30ef67-6e13-4863-9430-388c210ba9b6",
+      "id": "a51ffb26-aba7-4789-9cd9-40f2181c37f5",
       "name": "Ask Kaapi - Open chat",
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.3,
@@ -105,7 +105,7 @@
       }
     },
     {
-      "id": "ceab2ccb-dab1-448e-a160-c93c9cc1551a",
+      "id": "0691db34-941a-4744-83b5-91f4a4cee88b",
       "name": "1. Capture question",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -118,7 +118,7 @@
       }
     },
     {
-      "id": "1399a221-b509-4b10-93db-9b009979d0a6",
+      "id": "96a73ad7-88b1-48dd-9455-5501a8e216c6",
       "name": "2. Retrieve top 3 chunks",
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
@@ -140,7 +140,7 @@
       "alwaysOutputData": true
     },
     {
-      "id": "50c1def7-0b6c-4f83-8fce-8a56e52a31f5",
+      "id": "41f6b2e7-2e9a-482c-be81-1ad5d811518a",
       "name": "3. Show retrieved context",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -153,7 +153,7 @@
       }
     },
     {
-      "id": "f06b5536-c2ea-4732-8a9b-77fa9d8fe873",
+      "id": "befddd53-86b2-4344-bdea-50e9ad1004e8",
       "name": "4. Answer from sources",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
@@ -182,7 +182,7 @@
         },
         "options": {}
       },
-      "id": "daf2c616-1c91-42b1-b8e0-94d79df40d27",
+      "id": "7f86fc31-190f-49ce-ad9c-56c83eeb2bb6",
       "name": "Reply Model - Claude",
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.6,
@@ -192,7 +192,7 @@
       ]
     },
     {
-      "id": "a4d701c5-9d77-4168-afc8-57d1ed4c826b",
+      "id": "f721f725-581a-4657-9805-cd69118c0223",
       "name": "5. Answer and retrieved sources",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -205,7 +205,7 @@
       }
     },
     {
-      "id": "c526eaf4-f21d-4a3d-b376-c7ffb0f5d1b1",
+      "id": "aa822003-37a2-4a0e-ada3-58344b8a7b9a",
       "name": "START HERE - RAG",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
