@@ -12,7 +12,7 @@ const validation_error=!$json.output?'model_missing_output':!p?'model_not_json':
 if(!valid)return[{json:{...g,valid:false,needs_ticket:false,...(g.eval_mode?{validation_error,tools_used:observed.map(s=>s.tool),retrieved_chunks:observed.filter(s=>s.tool.includes('search_knowledge')).map(s=>s.result)}:{}),output:'I could not verify a safe answer just now. Please try again or contact the support team. No ticket or refund has been confirmed. Team Kaapi',sources:[],error_code:'unsafe_or_invalid_model_output',latency_ms:Date.now()-g.started_ms}}];
 const knownSources=new Set();for(const s of observed){const matches=s.result.matchAll(/(?:policies\.md|faq\.md)#[^"\\\n\r]+/g);for(const m of matches)knownSources.add(m[0]);}
 const sources=p.sources.filter(s=>typeof s==='string'&&[...knownSources].some(k=>k===s||k.startsWith(s))).slice(0,6);
-let answer=mask(p.answer.trim());let needs_ticket=p.needs_ticket&&!g.eval_mode;
+let answer=mask(p.answer.trim().replace(/\\r\\n/g,'\n').replace(/\\n/g,'\n').replace(/\\t/g,' '));if(sources.some(s=>!answer.includes(s)))answer+='\n\nSources: '+sources.join('; ');let needs_ticket=p.needs_ticket&&!g.eval_mode;
 if(p.category==='other')needs_ticket=false;
 if(refund&&!supplied)needs_ticket=false;
 if(eligibility?.approval_required===true){answer=answer.replace(/(?:your )?refund (?:has been |is )?(?:approved|issued|processed)/gi,'refund request requires human approval');}
