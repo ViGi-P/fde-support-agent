@@ -1,23 +1,21 @@
 # Kaapi support
 
-**[Download the starter ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v5.1.0/Kaapi-Day3-Starter.zip).** It contains the two workflows below. No optional imports or separate frontend hosting.
+![Kaapi chat](chat-preview.png)
+
+**[Download everything in one ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v5.1.0/Kaapi-Day3-Starter.zip)**, or download the files individually:
 
 | File | Purpose |
 | --- | --- |
-| `01-Kaapi-Support.json` | Branded chat, input masking, grounded answers, response validation and ticket requests. |
-| `02-Kaapi-Backend.json` | MCP tools, Google Sheets ticket log, Slack human review and the manual 15-case evaluation. |
+| **[Download 01 Support JSON](https://github.com/becomefde/fde-support-agent/releases/download/v5.1.0/01-Kaapi-Support.json)** | Branded chat, input masking, grounded answers, response validation and ticket requests. |
+| **[Download 02 Backend JSON](https://github.com/becomefde/fde-support-agent/releases/download/v5.1.0/02-Kaapi-Backend.json)** | MCP tools, Google Sheets ticket log, Slack human review and the manual 15-case evaluation. |
+| **[Download the blank ticket-log CSV](https://github.com/becomefde/fde-support-agent/releases/download/v5.1.0/Kaapi-Day3-Ticket-Log.csv)** | Import this into a new Google Sheet. It has the required headers and no sample customer rows. |
 
 ## Set up
 
-1. Import **both JSON files** into separate n8n workflows.
-2. In **02 Backend**, select your Google Sheets credential and the same Sheet/tab in its three Sheets nodes. Keep Auto-Map. Select your Slack credential and support channel in both Slack nodes. On **MCP SERVER**, select one private Bearer Auth credential. For evals, choose your 01 Support in **Run 01 support** and Gemini on the Judge. Publish 02, then copy the MCP **Production URL**.
-3. In **01 Support**, select Gemini. Paste the copied MCP URL and select the **same Bearer credential**. In **Save ticket**, choose 02 Backend. Publish and open **LIVE CHAT → Chat URL**. The styling and animations are included.
-
-Create a new Sheet tab and paste this tab-separated header into A1:
-
-```text
-time	request_id	ticket_id	event	status	category	order_id	summary	draft_reply	detail	latency_ms	tokens_in	tokens_out
-```
+1. **Create the log.** Download the CSV above. Open a [new Google Sheet](https://sheets.new), choose **File → Import → Upload**, select the downloaded CSV, and choose **Replace spreadsheet** in this NEW blank spreadsheet. Name it **Kaapi Ticket Log**. Keep the imported headers exactly as supplied.
+2. **Import both workflows.** In n8n, create a workflow and choose **⋯ → Import from file** for `02-Kaapi-Backend.json`. Create another workflow and import `01-Kaapi-Support.json`. You should now have exactly two new workflows.
+3. **Configure 02 Backend.** On all **three Google Sheets nodes**, select your credential, the new **Kaapi Ticket Log** spreadsheet and the **same imported tab**. On **Append ticket** and **Append decision**, choose **Mapping Column Mode → Map Automatically LAST**, after selecting the Sheet and tab. On both **Slack nodes**, select your credential and support channel. On **MCP SERVER**, create/select one private **Bearer Auth** credential. On **Run 01 support**, choose your 01 Support workflow; on **Judge Gemini**, select your Gemini credential. **Publish 02**, open MCP SERVER and copy its **Production URL**.
+4. **Configure 01 Support.** On its Gemini node, select your Gemini credential. In **MCP**, paste the copied production URL and select the **same Bearer credential** used by 02. In **Save ticket**, select your 02 Backend workflow. **Publish 01**, then open **LIVE CHAT → Chat URL**. This is the deployed product link; the styling and animations are already included.
 
 Use your own credentials and destinations. Keep successful/failed production execution saving off. Backend manual execution saving can remain on to retain fictional evaluation reports.
 
