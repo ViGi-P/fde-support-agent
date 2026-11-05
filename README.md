@@ -4,7 +4,7 @@
 
 ## Day 3 - Kaapi support
 
-**[Open Day 3](day3-ops/README.md)** or **[download one starter ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v5.1.0/Kaapi-Day3-Starter.zip)**. Just two workflows: the styled support chat and a backend for MCP tools, tickets, Slack review and evals.
+**[Open Day 3](day3-ops/README.md)** or **[download one starter ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v5.1.1/Kaapi-Day3-Starter.zip)**. Just two workflows: the styled support chat and a backend for MCP tools, tickets, Slack review and evals.
 
 ## Day 2 - start here
 
