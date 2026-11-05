@@ -2,6 +2,14 @@
 
 **One link. Workshop preparation, downloads and attendee steps.**
 
+## Day 3 - deploy your project
+
+**[Open the Day 3 product, quickstart and downloads](day3-ops/README.md).** Build on your first two days: publish a hosted support chat, connect read-only tools through MCP, validate model answers before ticket writes, log tickets in Sheets, and pause refund requests above INR 5000 for a real Slack approval decision. Run the fixed 15-case evaluation set without creating tickets.
+
+**Gemini is the complete attendee path.** Claude is an optional alternative; Jev is a separate optional confidence-gating exercise if your instance has the node and credits. No local model or frontend hosting account is required. Keep your working Day 2 workflows as backup.
+
+[Download the Day 3 starter ZIP](https://github.com/becomefde/fde-support-agent/releases/download/v5.0.0/Kaapi-Day3-Starter.zip) · [Short deployment path](day3-ops/QUICKSTART.md) · [Production boundaries](day3-ops/PRODUCTION-BOUNDARIES.md).
+
 ## Day 2 - start here
 
 **[Open the complete Day 2 attendee guide and downloads](day2/README.md).** Follow three stages: **01 RAG -> 02 save-ticket helper -> 03 agent with tools**. Gemini and Claude versions are available. Use your existing n8n Cloud, Gemini API, Google Sheets and Slack connections. Both Windows and Mac use the browser; no Python, terminal or local model is required for this Day 2 build.
