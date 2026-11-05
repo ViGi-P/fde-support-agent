@@ -1,1 +1,0 @@
-time,request_id,ticket_id,event,status,category,order_id,summary,draft_reply,detail,latency_ms,tokens_in,tokens_out
