@@ -9,17 +9,18 @@
         "public": true,
         "mode": "hostedChat",
         "authentication": "none",
-        "initialMessages": "Welcome to Kaapi & Co.\nAsk about coffee, policies or a fictional KC order. Please do not enter real personal details.",
+        "initialMessages": "Hi, welcome to Kaapi. I can help with your coffee, an order, or our policies. Try “Can I return an opened bag?” or “Where is order KC1051?”",
         "options": {
           "responseMode": "lastNode",
-          "title": "Kaapi Support",
-          "subtitle": "A cloud support assistant with sources and human review",
-          "inputPlaceholder": "Ask a Kaapi support question",
-          "loadPreviousSession": "notSupported"
+          "title": "Kaapi",
+          "subtitle": "A little help, freshly brewed.",
+          "inputPlaceholder": "Ask about your coffee or a KC order…",
+          "loadPreviousSession": "notSupported",
+          "customCss": ":root {\n  --chat--color-primary: #173f35;\n  --chat--color-primary-shade-50: #245848;\n  --chat--color-primary-shade-100: #103127;\n  --chat--color-secondary: #173f35;\n  --chat--color-secondary-shade-50: #245848;\n  --chat--color-dark: #23392f;\n  --chat--color-light: #f4f6f1;\n  --chat--color-white: #ffffff;\n  --chat--color-typing: #5a7569;\n  --chat--font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;\n  --chat--message--font-size: 15px;\n  --chat--message-line-height: 1.7;\n  --chat--message--bot--background: #ffffff;\n  --chat--message--bot--color: #23392f;\n  --chat--message--user--background: #173f35;\n  --chat--message--user--color: #ffffff;\n  --chat--body--background: #f4f6f1;\n  --chat--footer--background: #f4f6f1;\n  --chat--input--background: #ffffff;\n  --chat--input--font-size: 15px;\n  --chat--input--padding: 18px 20px;\n  --chat--input--border: 0;\n  --chat--input--border-active: 0;\n  --chat--input--send--button--background: #e9bc67;\n  --chat--input--send--button--color: #173f35;\n  --chat--input--send--button--background-hover: #f2cf8b;\n  --chat--input--send--button--color-hover: #173f35;\n  --chat--textarea--height: 58px;\n  --chat--textarea--max-height: 150px;\n}\n* { box-sizing: border-box; }\nhtml, body, #n8n-chat { width: 100%; height: 100%; margin: 0; }\nbody { background: #e5ebe4; color: #23392f; }\n#n8n-chat { display: grid; place-items: center; padding: 28px; }\n#n8n-chat .chat-layout.chat-wrapper {\n  display: grid; grid-template-columns: 284px minmax(0, 1fr);\n  grid-template-rows: minmax(0, 1fr) auto;\n  width: min(1120px, 100%); height: min(780px, calc(100dvh - 56px));\n  min-height: 380px; overflow: hidden; border: 1px solid #d3ddd3;\n  border-radius: 24px; background: #f4f6f1;\n  box-shadow: 0 24px 65px #173f351b, 0 2px 4px #173f3508;\n  animation: kaapi-arrive .45s cubic-bezier(.2,.8,.2,1) both;\n}\n#n8n-chat .chat-header {\n  grid-column: 1; grid-row: 1 / 3; position: relative; overflow: hidden;\n  display: block; padding: 42px 32px; border: 0; background: #173f35;\n  color: #fbf8ed;\n}\n#n8n-chat .chat-header::before {\n  content: 'Your coffee companion'; display: inline-block; padding: 7px 11px;\n  border: 1px solid #9bb8a951; border-radius: 30px; color: #d9e5d9;\n  font-size: 11px; line-height: 1.2; letter-spacing: .02em; margin-bottom: 30px;\n}\n#n8n-chat .chat-header .chat-heading { display: block; }\n#n8n-chat .chat-header h1 {\n  font-family: Georgia, 'Times New Roman', serif; font-size: 46px;\n  line-height: 1.03; font-weight: 400; letter-spacing: -1.8px;\n  margin: 0 0 22px; color: #fbf8ed; max-width: 210px;\n}\n#n8n-chat .chat-header > p {\n  max-width: 200px; color: #d1dfd1; font-size: 15px; line-height: 1.7;\n  margin: 0; font-weight: 400;\n}\n#n8n-chat .chat-header::after {\n  content: ''; position: absolute; left: 20px; right: 20px; bottom: 24px;\n  height: 195px; pointer-events: none;\n  background: center / contain no-repeat url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='210' viewBox='0 0 240 210'%3E%3Ccircle cx='120' cy='112' r='81' fill='%23e9bc67'/%3E%3Cg fill='none' stroke='%23173f35' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M69 94h91v39c0 25-17 38-45 38s-46-13-46-38z'/%3E%3Cpath d='M160 103h13c26 0 24 39-13 39M60 179h112M97 74c-14-17 17-20 3-39M120 73c-14-17 17-20 3-39M143 74c-14-17 17-20 3-39'/%3E%3C/g%3E%3C/svg%3E\");\n  animation: kaapi-brew .85s .15s cubic-bezier(.2,.8,.2,1) both;\n}\n#n8n-chat .chat-body { grid-column: 2; grid-row: 1; min-width: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #c5d2c7 transparent; }\n#n8n-chat .chat-messages-list { padding: 36px 38px 16px; min-height: 100%; }\n#n8n-chat .chat-message {\n  max-width: 88%; width: fit-content; font-size: 15px; line-height: 1.7;\n  padding: 17px 20px; border-radius: 15px; margin-bottom: 19px;\n  animation: kaapi-message .24s ease-out both; overflow-wrap: anywhere;\n}\n#n8n-chat .chat-message-from-bot { border: 1px solid #dfe7dd; border-top-left-radius: 3px; box-shadow: 0 2px 3px #173f3504; }\n#n8n-chat .chat-message-from-bot::before { content: 'Kaapi care'; display: block; color: #5b7566; font-size: 11px; font-weight: 650; margin-bottom: 7px; }\n#n8n-chat .chat-message-from-user { margin-left: auto; border-bottom-right-radius: 3px; }\n#n8n-chat .chat-message p { margin: 0; }\n#n8n-chat .chat-message p + p { margin-top: 10px; }\n#n8n-chat .chat-message a { color: inherit; text-underline-offset: 3px; }\n#n8n-chat .chat-message strong { font-weight: 650; }\n#n8n-chat .chat-footer { grid-column: 2; grid-row: 2; min-width: 0; padding: 12px 34px 22px; border: 0; background: #f4f6f1; }\n#n8n-chat .chat-footer::after {\n  content: 'Portfolio demo · fictional orders only. Please leave out personal details.';\n  display: block; margin: 12px 0 0; text-align: center; color: #65766b;\n  font-size: 10px; line-height: 1.5;\n}\n#n8n-chat .chat-input { border: 1px solid #cbd9cb; border-radius: 15px; overflow: hidden; background: white; transition: border-color .18s, box-shadow .18s; }\n#n8n-chat .chat-input:focus-within { border-color: #487560; box-shadow: 0 0 0 3px #173f3510; }\n#n8n-chat .chat-inputs { align-items: center; }\n#n8n-chat .chat-input textarea { min-height: 58px; color: #23392f; font-family: var(--chat--font-family); resize: none; }\n#n8n-chat .chat-input textarea::placeholder { color: #7b8a80; opacity: 1; }\n#n8n-chat .chat-input textarea:focus-visible { outline: 0; }\n#n8n-chat .chat-inputs-controls { padding-right: 8px; }\n#n8n-chat .chat-input-send-button { width: 42px; height: 42px; border-radius: 11px; margin: 0; transition: transform .18s, background .18s; }\n#n8n-chat .chat-input-send-button:not(:disabled):hover { transform: translateY(-2px); }\n#n8n-chat .chat-input-send-button:not(:disabled):active { transform: scale(.94); }\n#n8n-chat .chat-input-send-button:focus-visible { outline: 2px solid #173f35; outline-offset: 2px; }\n#n8n-chat .chat-input-send-button:disabled { background: #e8eee5; color: #91a28f; opacity: 1; }\n#n8n-chat .chat-message-typing { color: #5b7566; }\n@keyframes kaapi-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }\n@keyframes kaapi-brew { from { opacity: 0; transform: translateY(18px) rotate(-5deg); } to { opacity: 1; transform: none; } }\n@keyframes kaapi-message { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }\n@media (min-width: 701px) and (max-height: 620px) {\n  #n8n-chat .chat-header { padding-top: 30px; }\n  #n8n-chat .chat-header::before { margin-bottom: 20px; }\n  #n8n-chat .chat-header::after { height: 135px; bottom: 12px; }\n  #n8n-chat .chat-header h1 { font-size: 39px; margin-bottom: 16px; }\n}\n@media (max-width: 700px) {\n  #n8n-chat { padding: 0; }\n  #n8n-chat .chat-layout.chat-wrapper { width: 100%; height: 100dvh; min-height: 0; border: 0; border-radius: 0; box-shadow: none; grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr) auto; }\n  #n8n-chat .chat-header { grid-column: 1; grid-row: 1; padding: 22px 24px 24px; min-height: 146px; }\n  #n8n-chat .chat-header::before { padding: 0; border: 0; margin-bottom: 11px; font-size: 10px; }\n  #n8n-chat .chat-header h1 { font-size: 34px; letter-spacing: -1px; margin-bottom: 8px; max-width: 76%; }\n  #n8n-chat .chat-header > p { max-width: 72%; font-size: 12px; line-height: 1.5; }\n  #n8n-chat .chat-header::after { left: auto; right: 9px; bottom: 11px; width: 104px; height: 110px; }\n  #n8n-chat .chat-body { grid-column: 1; grid-row: 2; }\n  #n8n-chat .chat-messages-list { padding: 24px 19px 10px; }\n  #n8n-chat .chat-message { max-width: 94%; padding: 15px 17px; font-size: 14px; }\n  #n8n-chat .chat-footer { grid-column: 1; grid-row: 3; padding: 8px 16px 14px; padding-bottom: max(14px, env(safe-area-inset-bottom)); }\n  #n8n-chat .chat-footer::after { font-size: 9px; margin-top: 9px; }\n  #n8n-chat .chat-input textarea { font-size: 16px; }\n}\n@media (prefers-reduced-motion: reduce) {\n  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }\n}\n\n#n8n-chat .chat-header h1::after { content: '& Co.'; display: block; }\n"
         }
       },
       "position": [
-        0,
+        -200,
         0
       ],
       "typeVersion": 1.3,
@@ -33,8 +34,8 @@
         "inputSource": "passthrough"
       },
       "position": [
-        0,
-        240
+        -200,
+        400
       ],
       "typeVersion": 1.1
     },
@@ -46,7 +47,7 @@
         "jsCode": "function mask(v){return String(v??'').replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi,'[masked-email]').replace(/(?<![A-Za-z0-9])(?:\\+?\\d[\\d ()-]{7,}\\d)(?![A-Za-z0-9])/g,m=>{const d=m.replace(/\\D/g,'');return d.length>=10&&d.length<=15?'[masked-phone]':m;});}\nlet internal=false;try{internal=$('INTERNAL EVAL - never public').first().json.eval_mode===true;}catch{}\nconst question=mask(String(internal?$json.question:($json.chatInput||'')).trim());\nconst session=String($json.sessionId||'').slice(0,150);\nfunction hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(16).padStart(8,'0');}\nconst day=new Date().toISOString().slice(0,10);const request_id='K3-'+hash(day+'|'+session+'|'+question.toLowerCase())+'-'+hash(question+'|'+session+'|'+day);\nlet blocked='',reason='';\nif(!question||question.length>3000){blocked='Please send a Kaapi support question of 1 to 3000 characters.';reason='input_size';}\nelse if(/(?:ignore|override|forget|disregard).{0,35}(?:instructions|system|rules)|(?:reveal|print|show|give).{0,30}(?:system prompt|api key|password|secret)|(?:act as|you are now).{0,25}(?:admin|developer|system)/i.test(question)){blocked='I cannot change support rules or reveal credentials. Please ask a Kaapi order, coffee or policy question. Team Kaapi';reason='instruction_override';}\nelse if(/\\b(?:IPL|cricket winner|stock tips|write malware|political party)\\b/i.test(question)&&! /\\b(?:kaapi|coffee|order|refund|delivery)\\b/i.test(question)){blocked='I can help with Kaapi coffee, orders and support policies. Please ask a question about those. Team Kaapi';reason='off_topic';}\nreturn [{json:{question,request_id,eval_mode:internal,started_ms:Date.now(),blocked:Boolean(blocked),guard_reason:reason,output:blocked}}];"
       },
       "position": [
-        260,
+        40,
         0
       ],
       "typeVersion": 2
@@ -80,7 +81,7 @@
         "options": {}
       },
       "position": [
-        520,
+        280,
         0
       ],
       "typeVersion": 2.2
@@ -101,7 +102,7 @@
         "hasOutputParser": true
       },
       "position": [
-        790,
+        520,
         0
       ],
       "typeVersion": 2.2,
@@ -122,8 +123,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.2,
       "position": [
-        730,
-        270
+        440,
+        210
       ]
     },
     {
@@ -140,8 +141,8 @@
         }
       },
       "position": [
-        1030,
-        280
+        600,
+        210
       ],
       "typeVersion": 1.2
     },
@@ -153,7 +154,7 @@
         "jsCode": "function mask(v){return String(v??'').replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi,'[masked-email]').replace(/(?<![A-Za-z0-9])(?:\\+?\\d[\\d ()-]{7,}\\d)(?![A-Za-z0-9])/g,m=>{const d=m.replace(/\\D/g,'');return d.length>=10&&d.length<=15?'[masked-phone]':m;});}function obj(v){for(let i=0;i<5;i++){if(typeof v==='string'){const t=v.trim().replace(/^```(?:json)?\\s*/i,'').replace(/\\s*```$/,'');try{v=JSON.parse(t);}catch{return null;}}else if(v&&typeof v==='object'&&!Array.isArray(v)){if(v.output&&typeof v.output==='object'&&!v.answer&&!v.summary){v=v.output;continue;}if(v.input&&!v.summary){v=v.input;continue;}return v;}else return null;}return null;}\nconst g=$('1. Input guard and PII mask').first().json;\nconst p=obj($json.output);const trace=$json.intermediateSteps||[];\nlet valid=p&&typeof p.answer==='string'&&p.answer.trim().length>0&&p.answer.length<=5000&&['refund','delivery','product','other'].includes(p.category)&&typeof p.needs_ticket==='boolean'&&typeof p.summary==='string'&&typeof p.order_id==='string'&&Array.isArray(p.sources);\nconst observed=trace.map(t=>({tool:t.action?.tool||t.tool||'',result:String(t.observation||'')}));\nconst refund=(g.question.match(/\\b(refund|money back|return|paise|wapas)\\b/i)||p?.category==='refund');\nconst supplied=(g.question.match(/\\bKC\\d{4}\\b/i)||[])[0]?.toUpperCase()||'';\nlet eligibility=null;for(const s of observed){if(s.tool.includes('check_refund_eligibility')){let text=s.result;try{let a=JSON.parse(text);if(Array.isArray(a)&&a[0]?.text)a=JSON.parse(a[0].text);if(a.content?.[0]?.text)a=JSON.parse(a.content[0].text);if(a.order_id)eligibility=a;}catch{const m=text.match(/\\{[\\s\\S]*\\}/);try{eligibility=JSON.parse(m?.[0]);}catch{}}}}\nif(p?.order_id&&p.order_id.toUpperCase()!==supplied)valid=false;\nif(refund&&supplied&&!eligibility)valid=false;\nconst validation_error=!$json.output?'model_missing_output':!p?'model_not_json':(p?.order_id&&p.order_id.toUpperCase()!==supplied)?'order_id_mismatch':(refund&&supplied&&!eligibility)?'missing_refund_evidence':!valid?'response_schema_mismatch':null;\nif(!valid)return[{json:{...g,valid:false,needs_ticket:false,...(g.eval_mode?{validation_error,tools_used:observed.map(s=>s.tool),retrieved_chunks:observed.filter(s=>s.tool.includes('search_knowledge')).map(s=>s.result)}:{}),output:'I could not verify a safe answer just now. Please try again or contact the support team. No ticket or refund has been confirmed. Team Kaapi',sources:[],error_code:'unsafe_or_invalid_model_output',latency_ms:Date.now()-g.started_ms}}];\nconst knownSources=new Set();for(const s of observed){const matches=s.result.matchAll(/(?:policies\\.md|faq\\.md)#[^\"\\\\\\n\\r]+/g);for(const m of matches)knownSources.add(m[0]);}\nconst sources=p.sources.filter(s=>typeof s==='string'&&[...knownSources].some(k=>k===s||k.startsWith(s))).slice(0,6);\nlet answer=mask(p.answer.trim());let needs_ticket=p.needs_ticket&&!g.eval_mode;\nif(p.category==='other')needs_ticket=false;\nif(refund&&!supplied)needs_ticket=false;\nif(eligibility?.approval_required===true){answer=answer.replace(/(?:your )?refund (?:has been |is )?(?:approved|issued|processed)/gi,'refund request requires human approval');}\nreturn[{json:{...g,valid:true,output:answer,answer,category:p.category,summary:mask(p.summary).slice(0,500),draft_reply:answer,order_id:supplied,needs_ticket,sources,approval_required:eligibility?.approval_required===true,eligibility:eligibility?.eligibility||'',refund_approved:false,customer_email_sent:false,latency_ms:Date.now()-g.started_ms,model_tokens:$json.tokenUsage||$json.usageMetadata||null,tools_used:observed.map(s=>s.tool),retrieved_chunks:observed.filter(s=>s.tool.includes('search_knowledge')).map(s=>s.result)}}];"
       },
       "position": [
-        1170,
+        840,
         0
       ],
       "typeVersion": 2
@@ -187,7 +188,7 @@
         "options": {}
       },
       "position": [
-        1450,
+        1080,
         0
       ],
       "typeVersion": 2.2
@@ -209,8 +210,8 @@
         }
       },
       "position": [
-        1700,
-        -100
+        1080,
+        400
       ],
       "typeVersion": 1.3,
       "onError": "continueRegularOutput"
@@ -223,8 +224,8 @@
         "jsCode": "const v=$('4. Validate answer and actions').first().json;const r=$json;let status='';if(v.eval_mode)status='';else if(v.needs_ticket){if(r.ticket_saved===true&&r.duplicate===true){status='\\n\\nTicket: '+r.ticket_id+' was already recorded. No duplicate ticket was created. See the existing support log.';}else if(r.ticket_saved===true){status='\\n\\nTicket: '+r.ticket_id+(r.duplicate?' (already recorded)':'')+'. '+(r.slack_notified===true?'Support notified in Slack.':'Slack notification is not confirmed; support can find the saved ticket in the log.')+(r.approval_required?' Human approval is required; no refund has been issued.':'');}else status='\\n\\nThe ticket could not be confirmed saved. Please contact support with request '+v.request_id+'.';}const metrics={validation_error:v.validation_error||null,latency_ms:Date.now()-v.started_ms,model_tokens:v.model_tokens??null,token_notice:v.model_tokens?'Provider-reported usage':'This native agent node did not expose token usage; inspect the model execution details. No token count or cost is invented.'};return[{json:{output:v.output+status,request_id:v.request_id,...(v.eval_mode?{eval_mode:true,sources:v.sources,retrieved_chunks:v.retrieved_chunks,tools_used:v.tools_used,metrics,ticket_saved:false,slack_notified:false}:{})}}];"
       },
       "position": [
-        1970,
-        0
+        840,
+        400
       ],
       "typeVersion": 2
     },
@@ -236,8 +237,8 @@
         "jsCode": "return [{json:{output:$json.output,request_id:$json.request_id,...($json.eval_mode?{eval_mode:true,ticket_saved:false,slack_notified:false,guard_reason:$json.guard_reason}:{})}}];"
       },
       "position": [
-        790,
-        -240
+        280,
+        400
       ],
       "typeVersion": 2
     },
@@ -246,13 +247,13 @@
       "name": "START HERE",
       "type": "n8n-nodes-base.stickyNote",
       "parameters": {
-        "content": "## Day 3: one deployed project\n1. Configure/publish 02 Operations and 03 MCP Server first.\n2. Select your model credential. In MCP paste your own PRODUCTION URL and select the same Bearer Auth credential as the server.\n3. In Save ticket select your 02 Operations workflow. No field mappings.\n4. In LIVE CHAT keep Authentication None, then Publish. Copy the hosted Chat URL and test outside the editor.\n\n01 Gemini is the complete attendee path. 01 Claude is optional. Internal eval mode cannot be enabled by prompt text.",
-        "width": 1150,
-        "height": 330
+        "content": "## Start here · Support assistant\n**Only three connections:** choose Gemini, connect 03 MCP with its production URL + shared Bearer credential, and select 02 Operations in Save ticket.\nPublish, then open the Chat URL. The styled interface is already included.\n\n**Read the flow:** receive → protect → answer → validate → save only when needed → reply. Refunds above INR 5000 require a person.",
+        "width": 640,
+        "height": 205
       },
       "position": [
-        0,
-        -650
+        -240,
+        -320
       ],
       "typeVersion": 1
     },
@@ -261,13 +262,13 @@
       "name": "Why the knowledge survives",
       "type": "n8n-nodes-base.stickyNote",
       "parameters": {
-        "content": "## RAG through MCP\nsearch_knowledge retrieves from the same versioned policy/FAQ chunks, bundled inside 03. This small corpus uses keyword retrieval with English query translation by the agent. No transient vector-store reload or extra database account. Day 2 remains the semantic-vector exercise.\n\nThe agent has only READ tools. Sheets and Slack writes are deterministic workflow steps. This is a fictional-data portfolio deployment; real customer use requires identity verification and stronger storage/concurrency controls.",
-        "width": 1050,
-        "height": 320
+        "content": "## Why the branches exist\n**Top row:** mask contact details, retrieve evidence, enforce the response schema and validate the requested action.\n**Lower row:** FAQs go straight to the reply. Actionable requests call 02 once; the reply confirms what actually saved.\n**MCP is read-only:** knowledge, orders and eligibility. It cannot save a ticket or issue a refund.\nThe internal evaluation entry disables writes and cannot be enabled by a chat message.",
+        "width": 760,
+        "height": 205
       },
       "position": [
-        1300,
-        450
+        440,
+        -320
       ],
       "typeVersion": 1
     },
@@ -277,13 +278,13 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        910,
-        250
+        760,
+        210
       ],
       "parameters": {
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"answer\": {\n      \"type\": \"string\",\n      \"minLength\": 1,\n      \"maxLength\": 5000\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"refund\",\n        \"delivery\",\n        \"product\",\n        \"other\"\n      ]\n    },\n    \"needs_ticket\": {\n      \"type\": \"boolean\"\n    },\n    \"summary\": {\n      \"type\": \"string\"\n    },\n    \"order_id\": {\n      \"type\": \"string\",\n      \"description\": \"Exact supplied KC order ID; use an empty string for a policy FAQ without an order ID. Never use null.\"\n    },\n    \"sources\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    }\n  },\n  \"required\": [\n    \"answer\",\n    \"category\",\n    \"needs_ticket\",\n    \"summary\",\n    \"order_id\",\n    \"sources\"\n  ],\n  \"additionalProperties\": false\n}",
-        "autoFix": true
+        "autoFix": false
       }
     }
   ],
@@ -344,11 +345,6 @@
         [
           {
             "node": "3. Grounded support agent",
-            "type": "ai_languageModel",
-            "index": 0
-          },
-          {
-            "node": "Response schema - required fields",
             "type": "ai_languageModel",
             "index": 0
           }

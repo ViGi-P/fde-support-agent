@@ -2,7 +2,11 @@
 
 Go from the Day 1 automation and Day 2 RAG/tools to a cloud deployment with evaluations, guarded actions and human review.
 
-**Start here: [follow the attendee steps](ATTENDEE-STEPS.md).** Use Gemini for the complete project. Claude is optional. Jev is an optional confidence exercise and is not required to deploy.
+**Start here: [deploy with the short quickstart](QUICKSTART.md).** The branded, responsive chat and animations are included. [Detailed attendee steps](ATTENDEE-STEPS.md) · [Portfolio walkthrough](PORTFOLIO.md). Use Gemini for the complete project. Claude is optional. Jev is an optional confidence exercise and is not required to deploy.
+
+![Kaapi desktop chat](chat-desktop.png)
+
+The chat includes a coffee-brand layout, message entrance animation, responsive mobile styling and reduced-motion support. Custom styling ships inside 01; there is no separate frontend deployment.
 
 ## Download
 

@@ -22,7 +22,7 @@
         "jsCode": "function mask(v){return String(v??'').replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi,'[masked-email]').replace(/(?<![A-Za-z0-9])(?:\\+?\\d[\\d ()-]{7,}\\d)(?![A-Za-z0-9])/g,m=>{const d=m.replace(/\\D/g,'');return d.length>=10&&d.length<=15?'[masked-phone]':m;});}\nconst t=$json;if(!t.request_id||!/^K3-[a-f0-9]{8}-[a-f0-9]{8}$/.test(t.request_id))throw new Error('Internal request ID missing. Start from 01 chat, not Execute step.');\nif(!['refund','delivery','product','other'].includes(t.category)||typeof t.draft_reply!=='string'||!t.draft_reply.trim()||typeof t.summary!=='string'||!t.summary.trim())throw new Error('Invalid ticket envelope; no write performed.');\nconst orders=[{\"order_id\": \"KC1042\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1051\", \"amount_inr\": \"1450\"}, {\"order_id\": \"KC1063\", \"amount_inr\": \"8999\"}, {\"order_id\": \"KC1055\", \"amount_inr\": \"890\"}, {\"order_id\": \"KC1064\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1065\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1066\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1067\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1068\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1069\", \"amount_inr\": \"5100\"}, {\"order_id\": \"KC1070\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1071\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1072\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1073\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1074\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1075\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1076\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1077\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1078\", \"amount_inr\": \"650\"}, {\"order_id\": \"KC1080\", \"amount_inr\": \"650\"}];\nconst order=orders.find(o=>o.order_id===t.order_id);const approval_required=t.category==='refund'&&Boolean(order)&&Number(order.amount_inr)>5000;\nreturn[{json:{request_id:t.request_id,ticket_id:'KAAPI-'+t.request_id.slice(3),time:new Date().toISOString(),category:t.category,priority:approval_required?'high':'normal',order_id:t.order_id||'',summary:mask(t.summary).slice(0,500),draft_reply:mask(t.draft_reply).slice(0,5000),status:approval_required?'pending_approval':'open',approval_required,event:t.event==='review'?'review':'ticket',refund_approved:false,customer_email_sent:false}}];"
       },
       "position": [
-        250,
+        220,
         0
       ],
       "typeVersion": 2
@@ -56,7 +56,7 @@
         "options": {}
       },
       "position": [
-        500,
+        440,
         0
       ],
       "typeVersion": 2.2
@@ -80,8 +80,8 @@
         "options": {}
       },
       "position": [
-        750,
-        120
+        660,
+        0
       ],
       "typeVersion": 3,
       "alwaysOutputData": true
@@ -94,8 +94,8 @@
         "jsCode": "const t=$('1. Validate ticket envelope').first().json;const rows=$input.all().map(i=>i.json);const existing=rows.find(r=>r.request_id===t.request_id&&r.event==='ticket');return[{json:{...t,duplicate:Boolean(existing),existing}}];"
       },
       "position": [
-        1000,
-        120
+        880,
+        0
       ],
       "typeVersion": 2
     },
@@ -128,8 +128,8 @@
         "options": {}
       },
       "position": [
-        1260,
-        120
+        1100,
+        0
       ],
       "typeVersion": 2.2
     },
@@ -141,8 +141,8 @@
         "jsCode": "const t=$json;return[{json:{ticket_saved:true,ticket_id:t.existing.ticket_id,duplicate:true,slack_notified:false,approval_required:t.approval_required,output:'This request is already recorded. No repeated append or Slack post. Check its existing Slack message/log.'}}];"
       },
       "position": [
-        1500,
-        350
+        1320,
+        0
       ],
       "typeVersion": 2
     },
@@ -154,8 +154,8 @@
         "jsCode": "const t=$('2. Check existing request').first().json;return[{json:{time:t.time,request_id:t.request_id,ticket_id:t.ticket_id,event:'ticket',status:t.status,category:t.category,order_id:t.order_id,summary:t.summary,draft_reply:t.draft_reply,detail:t.approval_required?'Human review required above INR 5000. No refund issued.':'No refund issued.',latency_ms:'',tokens_in:'',tokens_out:''}}];"
       },
       "position": [
-        1500,
-        100
+        1100,
+        260
       ],
       "typeVersion": 2
     },
@@ -183,8 +183,8 @@
         }
       },
       "position": [
-        1750,
-        100
+        880,
+        260
       ],
       "typeVersion": 3,
       "alwaysOutputData": true
@@ -197,8 +197,8 @@
         "jsCode": "const t=$('2. Check existing request').first().json;const esc=s=>String(s).replace(/[<>]/g,'').replace(/@/g,'(at)');return[{json:{...t,ticket_saved:true,slack_text:'KAAPI SUPPORT | '+t.ticket_id+'\\nStatus: '+t.status+' | Category: '+t.category+' | Order: '+(t.order_id||'not supplied')+'\\nSummary: '+esc(t.summary)+'\\nDraft (not emailed): '+esc(t.draft_reply)+'\\n'+(t.approval_required?'Human approval is required. A separate review request will follow.':'For support review. No money or customer email was sent.')}}];"
       },
       "position": [
-        2000,
-        100
+        660,
+        260
       ],
       "typeVersion": 2
     },
@@ -225,8 +225,8 @@
         }
       },
       "position": [
-        2250,
-        100
+        440,
+        260
       ],
       "typeVersion": 2.7,
       "onError": "continueRegularOutput"
@@ -239,8 +239,8 @@
         "jsCode": "const t=$('5. Prepare Slack notice').first().json;const s=$json;const notified=Boolean(!s.error&&(s.message_timestamp||s.ts||s.message?.ts)&&s.channel);return[{json:{...t,slack_notified:notified,slack_error:s.error||null,event:'review',output:'Ticket saved: '+t.ticket_id+'. Slack '+(notified?'confirmed.':'not confirmed.')}}];"
       },
       "position": [
-        2500,
-        100
+        220,
+        260
       ],
       "typeVersion": 2
     },
@@ -273,8 +273,8 @@
         "options": {}
       },
       "position": [
-        2750,
-        100
+        0,
+        260
       ],
       "typeVersion": 2.2
     },
@@ -295,8 +295,8 @@
         }
       },
       "position": [
-        3010,
-        0
+        0,
+        510
       ],
       "typeVersion": 1.3
     },
@@ -308,8 +308,8 @@
         "jsCode": "const t=$('7. Confirm saved and notified').first().json;return[{json:{ticket_id:t.ticket_id,ticket_saved:true,slack_notified:t.slack_notified,approval_required:t.approval_required,approval_status:t.approval_required?'pending_approval':'not_required',refund_approved:false,customer_email_sent:false}}];"
       },
       "position": [
-        3280,
-        120
+        220,
+        510
       ],
       "typeVersion": 2
     },
@@ -321,8 +321,8 @@
         "jsCode": "const t=$('1. Validate ticket envelope').first().json;if(!t.approval_required)throw new Error('Review branch is only for refund orders above INR 5000.');return[{json:{...t,slack_text:'HUMAN REVIEW | '+t.ticket_id+'\\nFictional order '+t.order_id+' exceeds INR 5000.\\n'+t.summary+'\\nDraft: '+t.draft_reply+'\\nApprove or reject this support review. This records a human decision only; it DOES NOT transfer money. Link holders in this demo channel can respond. Do not forward approval links.'}}];"
       },
       "position": [
-        750,
-        -300
+        0,
+        800
       ],
       "typeVersion": 2
     },
@@ -359,8 +359,8 @@
         }
       },
       "position": [
-        1040,
-        -300
+        300,
+        800
       ],
       "typeVersion": 2.7,
       "onError": "continueRegularOutput"
@@ -373,8 +373,8 @@
         "jsCode": "const t=$('R1. Prepare approval').first().json;const d=$json.data||$json;const approved=d.approved===true;const rejected=d.approved===false;const status=approved?'review_approved':rejected?'review_rejected':'approval_expired_or_failed';return[{json:{time:new Date().toISOString(),request_id:t.request_id,ticket_id:t.ticket_id,event:'review_decision',status,category:t.category,order_id:t.order_id,summary:t.summary,draft_reply:t.draft_reply,detail:'Human review decision only. No payment action exists. '+($json.error?'Slack approval failed.':''),latency_ms:'',tokens_in:'',tokens_out:''}}];"
       },
       "position": [
-        1380,
-        -300
+        600,
+        800
       ],
       "typeVersion": 2
     },
@@ -402,8 +402,8 @@
         }
       },
       "position": [
-        1690,
-        -300
+        900,
+        800
       ],
       "typeVersion": 3,
       "alwaysOutputData": true
@@ -416,8 +416,8 @@
         "jsCode": "return[{json:{output:'Review decision recorded. No refund or customer email was sent.',refund_approved:false,customer_email_sent:false}}];"
       },
       "position": [
-        2000,
-        -300
+        1200,
+        800
       ],
       "typeVersion": 2
     },
@@ -426,13 +426,13 @@
       "name": "OPERATIONS SETUP",
       "type": "n8n-nodes-base.stickyNote",
       "parameters": {
-        "content": "## Configure once; no custom IDs or tool mappings\n1. Import Kaapi-Day3-Ticket-Log.csv into a NEW Google Sheet.\n2. On the THREE Sheets nodes select your Google credential, this document and the same imported tab. Automatic column mapping is already set.\n3. On BOTH Slack nodes select your Slack credential and your support channel from the list. Invite the connected app if needed.\n4. Publish. In 01 Save ticket select this workflow.\n\nThe upper review branch runs in the background and really waits for Approve/Reject. The chat does not hang waiting for an approver. A second event row records the decision, preserving an audit trail. This records review, not a real financial refund.",
-        "width": 1250,
-        "height": 420
+        "content": "## Ticket log & human review\n**Set up once:** select the SAME Sheet + tab in all three Google Sheets nodes. Keep Auto-Map. Select your support channel in both Slack nodes. Publish.\n**Follow the numbered ticket path:** validate → check replay → save → notify → confirm. A repeated request returns the existing ticket.\n**Separate review lane below:** the background call waits for Slack; the customer receives a reply immediately. A later row records approve/reject for the SAME ticket.\nNo node transfers money or emails a customer.",
+        "width": 1480,
+        "height": 210
       },
       "position": [
-        0,
-        -850
+        -40,
+        -300
       ],
       "typeVersion": 1
     },
@@ -441,13 +441,13 @@
       "name": "Failure and duplicate boundaries",
       "type": "n8n-nodes-base.stickyNote",
       "parameters": {
-        "content": "## Honest status\nTicket saved and Slack notified are separate facts. A failed Slack call does not repeat the Sheet append. Repeating the same question in the same session/day reuses its request ID and skips the second append.\n\nGoogle Sheets lookup + append is NOT an atomic unique constraint. Concurrent duplicates can race. Before real multi-user customer deployment use a database unique key/outbox, per-user auth, queue/rate controls and restricted approvers. Demo approval links are bearer links; only trusted staff should have the channel.",
-        "width": 1100,
-        "height": 330
+        "content": "## Read the result honestly\nSheet save and Slack delivery are separate outcomes. Never call a failed notification successful.\nNo automatic retries around writes. Sequential duplicates skip both append and Slack; a new session/day creates a new request.\nThis workshop uses Sheets replay detection. Real concurrent traffic requires a database unique constraint and delivery retry worker.",
+        "width": 900,
+        "height": 210
       },
       "position": [
-        2200,
-        450
+        500,
+        470
       ],
       "typeVersion": 1
     }

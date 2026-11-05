@@ -74,13 +74,13 @@
       "name": "SETUP MCP",
       "type": "n8n-nodes-base.stickyNote",
       "parameters": {
-        "content": "## Reusable tools over MCP\nCreate/select a Bearer Auth credential on MCP SERVER. You enter its secret. Publish this workflow, then copy its Production URL to 01 MCP Client. Select the SAME credential in 01.\n\nOnly fictional order lookups, deterministic policy checks and versioned knowledge search are exposed. No ticket writes, refunds or mail tools. The URL alone is not a secret or authentication.\n\nOn the deployed system these chunks are part of the published workflow, so a restart does not empty the knowledge.",
-        "width": 1100,
-        "height": 300
+        "content": "## MCP in three steps\n**1.** On MCP SERVER, create/select one Bearer Auth credential.\n**2.** Publish this workflow and copy the **Production URL**.\n**3.** In 01 Support, paste that URL and select the SAME Bearer credential. Done.\nThe three connected tools are discovered automatically. No extra server, vector database or tool-field mappings.\nRead-only: search policies/FAQ, look up fictional orders, check deterministic refund eligibility. No write or payment tools.",
+        "width": 1180,
+        "height": 210
       },
       "position": [
         -100,
-        -450
+        -290
       ],
       "typeVersion": 1
     }

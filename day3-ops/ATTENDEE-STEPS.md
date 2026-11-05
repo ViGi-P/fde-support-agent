@@ -74,7 +74,7 @@ Regex checks are a first layer. The agent's instructions, read-only tools, valid
 
 1. Open **04 Evals - Gemini**.
 2. Select your published 01 in **Run 01 support**. Select your Gemini credential on the judge.
-3. Execute **RUN EVALUATION**. The 15 policy cases run one at a time. Keep the page open; API limits can slow the run.
+3. Execute **RUN EVALUATION**. The 15 policy cases run one at a time, with a 20-second pause between cases. Avoid sending chat messages during the run. Keep the page open and allow about 8–12 minutes; provider limits can make it longer. The Judge retries temporary rate limits.
 4. Open **Evaluation report**, choose JSON, and save/copy it as `eval-before.json` in your project. Read failed questions, actual answers, reasons and retrieved chunks.
 5. Review the judge's decision yourself. Make one explainable prompt/retrieval correction only if evidence justifies it. Change the run label to `after-fix`, rerun the SAME cases and save `eval-after.json`.
 

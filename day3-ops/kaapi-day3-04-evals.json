@@ -17,7 +17,7 @@
       "name": "15 fixed policy questions",
       "type": "n8n-nodes-base.code",
       "parameters": {
-        "jsCode": "const tests=[{\"question\": \"Can I return an opened bag of coffee?\", \"expected_answer\": \"Only if it arrived damaged and you report it within 48 hours with a photo.\"}, {\"question\": \"How long does a refund take?\", \"expected_answer\": \"5-7 working days to the original payment method.\"}, {\"question\": \"I reported damage after 72 hours. Am I within the damage window?\", \"expected_answer\": \"No. Damaged items must be reported within 48 hours of delivery, with a photo.\"}, {\"question\": \"Can a refund of ₹5,001 be automatically approved?\", \"expected_answer\": \"No. Refunds above ₹5,000 need human approval.\"}, {\"question\": \"What is the unopened-item return window?\", \"expected_answer\": \"7 days.\"}, {\"question\": \"Is a photo required for damaged items?\", \"expected_answer\": \"Yes, with the report within 48 hours of delivery.\"}, {\"question\": \"How long does metro shipping take?\", \"expected_answer\": \"2-4 days.\"}, {\"question\": \"How long does shipping to other cities take?\", \"expected_answer\": \"4-7 days.\"}, {\"question\": \"Do you deliver to Pune?\", \"expected_answer\": \"Yes, across India; Pune usually takes 2-4 days.\"}, {\"question\": \"What grind should I use for a French press?\", \"expected_answer\": \"Coarse grind.\"}, {\"question\": \"What grind should I use for cold brew?\", \"expected_answer\": \"Coarse grind.\"}, {\"question\": \"Can I pause a subscription?\", \"expected_answer\": \"Yes, contact support before the next dispatch.\"}, {\"question\": \"Do you deliver outside India?\", \"expected_answer\": \"No, only within India.\"}, {\"question\": \"Is COD available everywhere?\", \"expected_answer\": \"No. It is available for eligible Indian pincodes; check at checkout.\"}, {\"question\": \"Where can I find my order ID?\", \"expected_answer\": \"In the order confirmation email.\"}];\nreturn tests.map((t,i)=>({json:{...t,case_id:'E'+String(i+1).padStart(2,'0'),eval_mode:true,run_label:'after-schema',sessionId:'eval-'+$execution.id+'-'+i}}));"
+        "jsCode": "const tests=[{\"question\": \"Can I return an opened bag of coffee?\", \"expected_answer\": \"Only if it arrived damaged and you report it within 48 hours with a photo.\"}, {\"question\": \"How long does a refund take?\", \"expected_answer\": \"5-7 working days to the original payment method.\"}, {\"question\": \"I reported damage after 72 hours. Am I within the damage window?\", \"expected_answer\": \"No. Damaged items must be reported within 48 hours of delivery, with a photo.\"}, {\"question\": \"Can a refund of ₹5,001 be automatically approved?\", \"expected_answer\": \"No. Refunds above ₹5,000 need human approval.\"}, {\"question\": \"What is the unopened-item return window?\", \"expected_answer\": \"7 days.\"}, {\"question\": \"Is a photo required for damaged items?\", \"expected_answer\": \"Yes, with the report within 48 hours of delivery.\"}, {\"question\": \"How long does metro shipping take?\", \"expected_answer\": \"2-4 days.\"}, {\"question\": \"How long does shipping to other cities take?\", \"expected_answer\": \"4-7 days.\"}, {\"question\": \"Do you deliver to Pune?\", \"expected_answer\": \"Yes, across India; Pune usually takes 2-4 days.\"}, {\"question\": \"What grind should I use for a French press?\", \"expected_answer\": \"Coarse grind.\"}, {\"question\": \"What grind should I use for cold brew?\", \"expected_answer\": \"Coarse grind.\"}, {\"question\": \"Can I pause a subscription?\", \"expected_answer\": \"Yes, contact support before the next dispatch.\"}, {\"question\": \"Do you deliver outside India?\", \"expected_answer\": \"No, only within India.\"}, {\"question\": \"Is COD available everywhere?\", \"expected_answer\": \"No. It is available for eligible Indian pincodes; check at checkout.\"}, {\"question\": \"Where can I find my order ID?\", \"expected_answer\": \"In the order confirmation email.\"}];\nreturn tests.map((t,i)=>({json:{...t,case_id:'E'+String(i+1).padStart(2,'0'),eval_mode:true,run_label:'baseline',sessionId:'eval-'+$execution.id+'-'+i}}));"
       },
       "position": [
         250,
@@ -94,7 +94,10 @@
         150
       ],
       "typeVersion": 1.9,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 45000
     },
     {
       "parameters": {
@@ -143,15 +146,31 @@
       "name": "EVAL SETUP",
       "type": "n8n-nodes-base.stickyNote",
       "parameters": {
-        "content": "## Test the deployed logic without writing tickets\n1. In Run 01 support choose your configured/published 01 Gemini or Claude workflow. No field mappings.\n2. Select Gemini credential on the Judge.\n3. Execute RUN EVALUATION. Fifteen cases run serially.\n4. Open Evaluation report, JSON view; copy/save the actual report as eval-before.json. Inspect failed answers AND chunks.\n5. Make one explainable change, label it after-fix in 15 fixed policy questions, rerun, save eval-after.json. Do not invent failures or a 15/15 result.\n\nAn internal-only trigger enables eval mode. Chat prompts cannot switch off real safeguards or enable eval mode.",
-        "width": 1200,
-        "height": 330
+        "content": "## Evaluate the product you deployed\n**Two choices:** select your 01 Support workflow in Run 01 support; select Gemini on the Judge. Execute.\nThe SAME 15 questions run one at a time with ticket and Slack writes disabled. Open Evaluation report → JSON → Copy to Clipboard.\nSave the baseline, inspect the actual failures and evidence, make one explainable fix, then rerun the same cases. A model judge is a reviewer, not ground truth.\nUse measured pass rates and latency in your portfolio. Do not claim customer-production readiness from a workshop test.\n**Free-tier pacing:** wait 20 seconds between cases; avoid using the chat during the evaluation. The Judge retries temporary rate limits. Allow about 8–12 minutes, longer if your provider is busy.",
+        "width": 1740,
+        "height": 230
       },
       "position": [
         0,
-        -650
+        -330
       ],
       "typeVersion": 1
+    },
+    {
+      "id": "909310c1-6b51-4637-a42f-1e08fe23c581",
+      "name": "Pace - 20 seconds between cases",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1630,
+        420
+      ],
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 20,
+        "unit": "seconds"
+      },
+      "webhookId": "c076a46a-4ae3-4f95-b813-380d6f6d9c95"
     }
   ],
   "connections": {
@@ -232,7 +251,7 @@
       "main": [
         [
           {
-            "node": "Loop - one case at a time",
+            "node": "Pace - 20 seconds between cases",
             "type": "main",
             "index": 0
           }
@@ -245,6 +264,17 @@
           {
             "node": "LLM judge - not ground truth",
             "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pace - 20 seconds between cases": {
+      "main": [
+        [
+          {
+            "node": "Loop - one case at a time",
+            "type": "main",
             "index": 0
           }
         ]

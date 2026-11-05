@@ -1,0 +1,155 @@
+{
+  "name": "Kaapi Day 3 - 05 OPTIONAL Jev confidence gate",
+  "nodes": [
+    {
+      "id": "133be0c4-aa21-4ee4-aff7-6f1983a19a37",
+      "name": "RUN JEV DEMO",
+      "type": "n8n-nodes-base.manualTrigger",
+      "parameters": {},
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "id": "44897383-a81f-4344-9782-002b27458e29",
+      "name": "Fictional ambiguous request",
+      "type": "n8n-nodes-base.code",
+      "parameters": {
+        "jsCode": "return[{json:{message:'Order KC1063 arrived damaged. I want a refund, but I do not know when it was delivered or whether I have a photo.'}}];"
+      },
+      "position": [
+        230,
+        0
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "route",
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jev-latest",
+          "cachedResultName": "jev-latest"
+        },
+        "stateText": "={{ $json.message }}",
+        "routeInstructions": "Can this support request proceed using the supplied evidence, or does it need human review or more information?",
+        "routes": {
+          "route": [
+            {
+              "name": "proceed",
+              "description": "The request is ordinary Kaapi support and contains enough evidence for a grounded answer. This does not authorize a refund."
+            },
+            {
+              "name": "review",
+              "description": "The request is ambiguous, missing required evidence, outside support scope, or needs a person to review it."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@typesafe-ai/n8n-nodes-typesafe-ai.typeSafeAi",
+      "typeVersion": 1,
+      "position": [
+        500,
+        0
+      ],
+      "id": "429a47d3-9aca-47bb-997e-8db58750b84d",
+      "name": "Jev - confidence and review"
+    },
+    {
+      "id": "81350ddd-e866-4249-9853-4cfa1a238fa2",
+      "name": "Proceed only with sufficient confidence",
+      "type": "n8n-nodes-base.code",
+      "parameters": {
+        "jsCode": "const c=Number($json.route?.confidence);return[{json:{...$json,decision:Number.isFinite(c)&&c>=0.95?'continue_to_gemini':'human_review',notice:'Confidence is a model score, not a guarantee. Numeric refund rules still run in code.'}}];"
+      },
+      "position": [
+        820,
+        -100
+      ],
+      "typeVersion": 2
+    },
+    {
+      "id": "e924dd39-ec60-4ebf-978a-45deb7700d62",
+      "name": "Needs human review",
+      "type": "n8n-nodes-base.code",
+      "parameters": {
+        "jsCode": "return[{json:{...$json,decision:'human_review',notice:'Missing evidence or ambiguous request. No automatic refund. Gemini can draft the clarification.'}}];"
+      },
+      "position": [
+        820,
+        140
+      ],
+      "typeVersion": 2
+    },
+    {
+      "id": "71e10003-56be-443c-8968-522af86b81fd",
+      "name": "OPTIONAL - keep Gemini core",
+      "type": "n8n-nodes-base.stickyNote",
+      "parameters": {
+        "content": "## Jev + Gemini, with a complete Gemini-only path\nThis node was tested in the webinar n8n Cloud account on 5 November. It used Gateway credits and returned review, confidence 1, model jev-1.14.0 for the sample. That is one test, not an accuracy benchmark.\n\nSelect Gateway credits if offered and confirm a positive balance, or use your TypeSafe credential. Availability/credits vary by attendee. If the node or credits are unavailable, skip this optional workflow; 01-04 still work with Gemini. Jev does not generate replies and never replaces the INR 5000 code rule.",
+        "width": 1100,
+        "height": 330
+      },
+      "position": [
+        0,
+        -500
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "RUN JEV DEMO": {
+      "main": [
+        [
+          {
+            "node": "Fictional ambiguous request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fictional ambiguous request": {
+      "main": [
+        [
+          {
+            "node": "Jev - confidence and review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jev - confidence and review": {
+      "main": [
+        [
+          {
+            "node": "Proceed only with sufficient confidence",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Needs human review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false,
+    "executionTimeout": 180
+  },
+  "active": false,
+  "pinData": {}
+}
