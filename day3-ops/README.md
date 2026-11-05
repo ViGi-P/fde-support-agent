@@ -54,7 +54,7 @@ The same knowledge from Day 2 is bundled and versioned in the MCP server. This d
 | 40-65 | Run the fixed evaluation set; inspect actual failures and retrieved evidence |
 | 65-90 | Publish the MCP tool server and connect the agent client |
 | 90-100 | Optional Jev confidence/review exercise; keep Gemini-only attendees moving |
-| 100-135 | Publish the authenticated hosted chat and test its live URL |
+| 100-135 | Publish the hosted demo chat and test its live URL |
 | 135-150 | Verify a ticket, approval and evidence for the portfolio |
 
 For a practical build, import/configure 02 and 03 first; the teaching order can introduce their purpose before opening each section.
