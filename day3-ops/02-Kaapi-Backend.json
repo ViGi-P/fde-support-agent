@@ -456,7 +456,7 @@
       "name": "MCP SERVER - publish and copy production URL",
       "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
       "parameters": {
-        "path": "5ac7cbbf-eff5-44ef-8686-63d8ceaa4c67",
+        "path": "fc24603c-8f0a-4106-83df-d3f51aff81b3",
         "authentication": "bearerAuth"
       },
       "position": [
@@ -543,7 +543,8 @@
         1850,
         1000
       ],
-      "typeVersion": 1
+      "typeVersion": 1,
+      "disabled": true
     },
     {
       "id": "828395c9-acb6-47f3-afe7-99c93304c9f0",
@@ -592,7 +593,8 @@
         2630,
         1150
       ],
-      "typeVersion": 1.3
+      "typeVersion": 1.3,
+      "disabled": true
     },
     {
       "id": "4271a315-7a1d-4adf-8bdf-354265fbc9f4",
@@ -679,9 +681,9 @@
       "name": "EVAL SETUP",
       "type": "n8n-nodes-base.stickyNote",
       "parameters": {
-        "content": "## Evaluate · no extra import\nSelect 01 Support in Run 01 support and Gemini on the Judge. Click Execute workflow; the manual RUN EVALUATION entry runs all 15 cases.\nOpen Evaluation report → JSON for actual answers, sources and pass/fail reasons. Ticket and Slack writes are disabled for these internal calls.\nThe 20-second pause respects free-tier quota. Avoid using chat during the run; allow about 10 minutes. Save your measured report if you need it.",
+        "content": "## Evals · connect after both workflows are published\nFIRST PUBLISH: leave RUN EVALUATION and Run 01 support deactivated. Publish 02 Backend, then configure and publish 01 Support. No Support target is needed to publish Backend first.\nAFTER BOTH ARE PUBLISHED: choose published 01 Support in Run 01 support. Activate that node and RUN EVALUATION, then republish 02.\nExecute RUN EVALUATION for the same 15 cases with ticket/Slack writes disabled. Open Evaluation report → JSON for actual answers and reasons. The pause respects free-tier quota; allow about 10 minutes.",
         "width": 1740,
-        "height": 210
+        "height": 235
       },
       "position": [
         1850,
